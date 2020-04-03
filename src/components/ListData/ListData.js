@@ -1,6 +1,7 @@
 import React, {useState, useEffect} from "react"
 import app from "../../firebase";
 import {makeStyles} from '@material-ui/core/styles';
+import {Link} from "react-router-dom";
 
 import {
     MenuItem,
@@ -8,6 +9,8 @@ import {
     InputLabel,
     Container, Select
 } from "@material-ui/core";
+import SidePanel from "../SidePanel/SidePanel";
+import styled from "styled-components";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -23,8 +26,8 @@ const useStyles = makeStyles((theme) => ({
 const ListData = () => {
     const classes = useStyles();
     const [firebaseAllData, setFirebaseAllData] = useState([]);
-    const [firebaseCurrentData, setFirebaseCurrentPageData] = useState([]);
-    const [firebaseCurrentDataArticle, setFirebaseCurrentPageDataArticle] = useState([]);
+    const [firebaseCurrentPageData, setFirebaseCurrentPageData] = useState([]);
+    const [firebaseCurrentDataArticle, setFirebaseCurrentDataArticle] = useState([]);
     const [pageChoose, setPageChoose] = useState("");
     const [articleChoose, setArticleChoose] = useState("");
 
@@ -56,7 +59,8 @@ const ListData = () => {
             console.log("troisieme")
             app.database().ref(`/pagesPicturesData/${pageChoose}/${articleChoose}`).once("value")
                 .then(snapshot => {
-                    setFirebaseCurrentPageDataArticle(Object.entries(snapshot.val()));
+                    setFirebaseCurrentDataArticle(snapshot.val());
+                    console.log(snapshot.val())
                 })
                 .catch((error) => {
                     console.error(error)
@@ -72,6 +76,7 @@ const ListData = () => {
 
     return (
         <Container fixed>
+            <SidePanel/>
             <FormControl className={classes.formControl}>
                 <InputLabel>pages</InputLabel>
                 <Select
@@ -88,15 +93,69 @@ const ListData = () => {
                     value={articleChoose}
                     onChange={(e) => setArticleChoose(e.target.value)}
                 >
-                    {firebaseCurrentData.map(([key]) => (<MenuItem key={key} value={key}>{key}</MenuItem>))}
+                    {firebaseCurrentPageData.map(([key]) => (<MenuItem key={key} value={key}>{key}</MenuItem>))}
                 </Select>
             </FormControl>
 
-            {firebaseCurrentDataArticle && firebaseCurrentDataArticle.map(([key,article]) => {
-                    return <p key={key}>{key}: {article}</p>
+            {firebaseCurrentDataArticle && [firebaseCurrentDataArticle].map((article, index) => {
+                return (
+                    <ArticleContent id={article.name} key={index}>
+                        <ArticleImage src={article.urlImage} alt={article.name}/>
+                        <ArticleLocation><span>{article.articleTitle}</span>{article.location}</ArticleLocation>
+                        <p>{article.content}</p>
+                        {article.type === "category" && <SeeMoreLink to="/"><span>voir plus ></span></SeeMoreLink>}
+                    </ArticleContent>
+                )
+            })}
+            {firebaseCurrentDataArticle && Object.entries(firebaseCurrentDataArticle).map(([key,article]) => {
+                return <p key={key}>{key}: {article}</p>
             })}
         </Container>
     )
 };
+
+const ArticleContent = styled.div`
+          padding: 5px 10px;
+          margin-bottom: 20px
+    `;
+
+const ArticleImage = styled.img`
+          width: 100%      
+    `;
+
+const SeeMoreLink = styled(Link)`
+        text-decoration: none;
+            span {
+                color: #C89446;
+                &:hover {
+                    text-decoration: underline;
+                }
+            }
+    `;
+
+const ArticleLocation = styled.h3`
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        line-height: 1.2;
+        margin-left: 5px;
+           span {
+            text-transform: none;
+            font-family: 'pinyon script' , sans-serif;
+            color: #C89446;
+            display: block;
+            font-size: 2.1rem;
+            letter-spacing: 1px;
+           }
+        &::before {
+            display: block;
+            content: "";
+            width: 24px;
+            height: 2px;
+            background: #C89446;
+            margin-bottom: 10px;
+            clear: both;
+        }  
+    `;
 
 export default ListData
