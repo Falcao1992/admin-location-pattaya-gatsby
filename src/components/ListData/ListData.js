@@ -7,7 +7,7 @@ import {
     MenuItem,
     FormControl,
     InputLabel,
-    Container, Select
+    Container, Select, Button
 } from "@material-ui/core";
 import SidePanel from "../SidePanel/SidePanel";
 import styled from "styled-components";
@@ -42,9 +42,7 @@ const ListData = () => {
                 .catch((error) => {
                     console.error(error)
                 })
-        }
-
-        else if (pageChoose && !articleChoose) {
+        } else if (pageChoose && !articleChoose) {
             console.log("deuxieme")
             app.database().ref(`/pagesPicturesData/${pageChoose}`).once("value")
                 .then(snapshot => {
@@ -53,9 +51,7 @@ const ListData = () => {
                 .catch((error) => {
                     console.error(error)
                 })
-        }
-
-        else if (articleChoose) {
+        } else if (articleChoose) {
             console.log("troisieme")
             app.database().ref(`/pagesPicturesData/${pageChoose}/${articleChoose}`).once("value")
                 .then(snapshot => {
@@ -96,25 +92,31 @@ const ListData = () => {
                     {firebaseCurrentPageData.map(([key]) => (<MenuItem key={key} value={key}>{key}</MenuItem>))}
                 </Select>
             </FormControl>
-
-            {firebaseCurrentDataArticle && [firebaseCurrentDataArticle].map((article, index) => {
+            {console.log(firebaseCurrentDataArticle)}
+            {firebaseCurrentDataArticle.length !== 0 && [firebaseCurrentDataArticle].map((article, index) => {
                 return (
-                    <ArticleContent id={article.name} key={index}>
-                        <ArticleImage src={article.urlImage} alt={article.name}/>
-                        <ArticleLocation><span>{article.articleTitle}</span>{article.location}</ArticleLocation>
-                        <p>{article.content}</p>
-                        {article.type === "category" && <SeeMoreLink to="/"><span>voir plus ></span></SeeMoreLink>}
-                    </ArticleContent>
+                    <div key={index}>
+                        <ArticleContent id={article.name}>
+                            <ArticleImage src={article.urlImage} alt={article.name}/>
+                            <ArticleLocation><span>{article.articleTitle}</span>{article.location}</ArticleLocation>
+                            <p>{article.content}</p>
+                            {article.type === "category" && <SeeMoreLink to="/"><span>voir plus ></span></SeeMoreLink>}
+                        </ArticleContent>
+                        <div>
+                            <Link to={{pathname: `/listData/edit/${article.name}`, state: {
+                                firebaseCurrentDataArticle}
+                            }}><Button variant="contained" color="primary"> modifier</Button></Link>
+                            <Button variant="contained" color="secondary"> Supprimer Quiz</Button>
+                        </div>
+                    </div>
                 )
-            })}
-            {firebaseCurrentDataArticle && Object.entries(firebaseCurrentDataArticle).map(([key,article]) => {
-                return <p key={key}>{key}: {article}</p>
             })}
         </Container>
     )
 };
 
 const ArticleContent = styled.div`
+          width: 100%;
           padding: 5px 10px;
           margin-bottom: 20px
     `;
