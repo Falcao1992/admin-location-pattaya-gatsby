@@ -2,6 +2,8 @@ import React, {useState, useEffect} from "react"
 import app from "../../firebase";
 import {makeStyles} from '@material-ui/core/styles';
 import {Link} from "react-router-dom";
+import useLocalStorage from 'react-use-localstorage';
+import RefreshIcon from '@material-ui/icons/Refresh';
 
 import {
     MenuItem,
@@ -28,12 +30,12 @@ const ListData = () => {
     const [firebaseAllData, setFirebaseAllData] = useState([]);
     const [firebaseCurrentPageData, setFirebaseCurrentPageData] = useState([]);
     const [firebaseCurrentDataArticle, setFirebaseCurrentDataArticle] = useState([]);
-    const [pageChoose, setPageChoose] = useState("");
-    const [articleChoose, setArticleChoose] = useState("");
+    const [pageChoose, setPageChoose] = useLocalStorage("page choose", "");
+    const [articleChoose, setArticleChoose] = useLocalStorage("article choose", "");
 
 
     useEffect(() => {
-        if (pageChoose === "") {
+        if (pageChoose === "" ) {
             console.log("premier")
             app.database().ref("/pagesPicturesData").once("value")
                 .then(snapshot => {
@@ -60,7 +62,7 @@ const ListData = () => {
                 })
                 .catch((error) => {
                     console.error(error)
-                })
+                });
         }
     }, [pageChoose, articleChoose]);
 
@@ -68,6 +70,11 @@ const ListData = () => {
     const handlePageChoose = (e) => {
         setArticleChoose("");
         setPageChoose(e.target.value)
+    };
+
+    const clearStorageData = () => {
+        setArticleChoose("");
+        setPageChoose("")
     };
 
     return (
@@ -92,7 +99,9 @@ const ListData = () => {
                     {firebaseCurrentPageData.map(([key]) => (<MenuItem key={key} value={key}>{key}</MenuItem>))}
                 </Select>
             </FormControl>
-            {console.log(firebaseCurrentDataArticle)}
+
+            {articleChoose && pageChoose && <Button type="button" onClick={clearStorageData}><RefreshIcon/></Button>}
+
             {firebaseCurrentDataArticle.length !== 0 && [firebaseCurrentDataArticle].map((article, index) => {
                 return (
                     <div key={index}>
@@ -102,12 +111,12 @@ const ListData = () => {
                             <p>{article.content}</p>
                             {article.type === "category" && <SeeMoreLink to="/"><span>voir plus ></span></SeeMoreLink>}
                         </ArticleContent>
-                        <div>
+                        { articleChoose && pageChoose && <ContainerButton>
                             <Link to={{pathname: `/listData/edit/${article.name}`, state: {
-                                firebaseCurrentDataArticle}
+                                firebaseCurrentDataArticle, pageChoose}
                             }}><Button variant="contained" color="primary"> modifier</Button></Link>
-                            <Button variant="contained" color="secondary"> Supprimer Quiz</Button>
-                        </div>
+                            <Button variant="contained" color="secondary"> Supprimer</Button>
+                        </ContainerButton>}
                     </div>
                 )
             })}
@@ -117,7 +126,7 @@ const ListData = () => {
 
 const ArticleContent = styled.div`
           width: 100%;
-          padding: 5px 10px;
+          padding: 5px 0;
           margin-bottom: 20px
     `;
 
@@ -158,6 +167,10 @@ const ArticleLocation = styled.h3`
             margin-bottom: 10px;
             clear: both;
         }  
+    `;
+const ContainerButton = styled.div`
+      display: flex;
+      justify-content: space-between;
     `;
 
 export default ListData

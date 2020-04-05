@@ -1,11 +1,12 @@
 import React, {useEffect, useState} from "react";
 import {Link} from "react-router-dom";
+import app from "../../firebase";
 import {Button, TextField, Container} from "@material-ui/core";
 import styled from "styled-components";
 
-const ListDataEdit = (props) => {
+const ListDataEdit = ({location, history}) => {
     const [currentDataEdit, setCurrentDataEdit] = useState({});
-    const {firebaseCurrentDataArticle} = props.location.state;
+    const {firebaseCurrentDataArticle, pageChoose} = location.state;
 
     useEffect(() => {
         setCurrentDataEdit(firebaseCurrentDataArticle)
@@ -14,26 +15,26 @@ const ListDataEdit = (props) => {
 
     console.log(Object.entries(currentDataEdit))
 
-    const handleChangeField = (e, index, label) => {
+    const handleEditData = (e, label) => {
         if (typeof currentDataEdit === 'object') {
             const inputVal = e.target.value;
             const result = {...currentDataEdit};
             result[label] = inputVal;
             setCurrentDataEdit(result)
         }
-
     };
 
-    /* const handleChangeAnswer = (e, index) => {
-         const inputVal = e.target.value;
-         const result = [...answers];
-
-         result[index] = {
-             ...result[index],
-             label: inputVal,
-         };
-         setAnswers(result)
-     };*/
+    const submitEdit = (e,articleName) => {
+        e.preventDefault();
+        app.database().ref(`/pagesPicturesData/${pageChoose}`)
+            .update({
+                [articleName] :currentDataEdit
+            });
+        //setIsSubmit(true)
+        history.push("/listData");
+        console.log(articleName, "articleName")
+        console.log(pageChoose, "pageChoose")
+    };
 
     return (
         <>
@@ -53,13 +54,12 @@ const ListDataEdit = (props) => {
                         </div>
                         {currentDataEdit && Object.entries(currentDataEdit).map((value, index) => {
                                 return (
-                                        <>
+                                        <div key={index}>
                                             {value[0] === "content" || value[0] === "uid" || value[0] === "urlImage" || value[0] === "articleTitle"
                                         ?
                                                 <TextFieldStyledLarge
                                                     disabled={(value[1] === "article" || value[0] === "uid" || value[0] === "name") && true}
-                                                    onChange={(e) => handleChangeField(e, index, value[0])}
-                                                    key={index}
+                                                    onChange={(e) => handleEditData(e, value[0])}
                                                     multiline rowsMax="4"
                                                     required label={value[0]}
                                                     defaultValue={value[1]}
@@ -67,14 +67,14 @@ const ListDataEdit = (props) => {
                                         :
                                                 <TextFieldStyled
                                                 disabled={(value[1] === "article" || value[0] === "uid" || value[0] === "name") && true}
-                                                onChange={(e) => handleChangeField(e, index, value[0])}
-                                                key={index}
+                                                onChange={(e) => handleEditData(e, value[0])}
                                                 multiline rowsMax="4"
                                                 required label={value[0]}
                                                 defaultValue={value[1]}
                                                 />
                                             }
-                                        </>
+
+                                        </div>
                                 )
                             }
                         )
@@ -84,7 +84,7 @@ const ListDataEdit = (props) => {
                                 pathname: `/listData/edit/${article.name}`, state: {
                                     firebaseCurrentDataArticle
                                 }
-                            }}><Button variant="contained" color="primary"> sauvegarder changement</Button></Link>
+                            }}><Button variant="contained" color="primary" onClick={(e) => submitEdit(e,article.name) }> sauvegarder changement</Button></Link>
                             <Button variant="contained" color="secondary"> Supprimer Quiz</Button>
                         </div>
                     </Container>
