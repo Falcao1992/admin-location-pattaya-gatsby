@@ -35,7 +35,7 @@ const ListData = () => {
 
 
     useEffect(() => {
-        if (pageChoose === "" ) {
+        if (pageChoose === "") {
             console.log("premier")
             app.database().ref("/pagesPicturesData").once("value")
                 .then(snapshot => {
@@ -111,10 +111,13 @@ const ListData = () => {
                             <p>{article.content}</p>
                             {article.type === "category" && <SeeMoreLink to="/"><span>voir plus ></span></SeeMoreLink>}
                         </ArticleContent>
-                        { articleChoose && pageChoose && <ContainerButton>
-                            <Link to={{pathname: `/listData/edit/${article.name}`, state: {
-                                firebaseCurrentDataArticle, pageChoose}
+                        {articleChoose && pageChoose && <ContainerButton>
+                            <Link to={{
+                                pathname: `/listData/edit/${article.name}`, state: {
+                                    firebaseCurrentDataArticle, pageChoose
+                                }
                             }}><Button variant="contained" color="primary"> modifier</Button></Link>
+                            <Link to="/listData/create"><Button variant="contained" color="primary"> Creer</Button></Link>
                             <Button variant="contained" color="secondary"> Supprimer</Button>
                         </ContainerButton>}
                     </div>

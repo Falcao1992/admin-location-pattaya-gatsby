@@ -3,6 +3,7 @@ import {Link} from "react-router-dom";
 import app from "../../firebase";
 import {Button, TextField, Container} from "@material-ui/core";
 import styled from "styled-components";
+import SidePanel from "../SidePanel/SidePanel";
 
 const ListDataEdit = ({location, history}) => {
     const [currentDataEdit, setCurrentDataEdit] = useState({});
@@ -30,18 +31,15 @@ const ListDataEdit = ({location, history}) => {
             .update({
                 [articleName] :currentDataEdit
             });
-        //setIsSubmit(true)
         history.push("/listData");
-        console.log(articleName, "articleName")
-        console.log(pageChoose, "pageChoose")
     };
 
     return (
         <>
             {currentDataEdit && [currentDataEdit].map((article, index) => {
-
                 return (
                     <Container fixed key={index}>
+                        <SidePanel/>
                         <div>
                             <ArticleContent id={article.name}>
                                 <ArticleImage src={article.urlImage} alt={article.name}/>
@@ -68,7 +66,7 @@ const ListDataEdit = ({location, history}) => {
                                                 <TextFieldStyled
                                                 disabled={(value[1] === "article" || value[0] === "uid" || value[0] === "name") && true}
                                                 onChange={(e) => handleEditData(e, value[0])}
-                                                multiline rowsMax="4"
+                                                multiline rowsMax="2"
                                                 required label={value[0]}
                                                 defaultValue={value[1]}
                                                 />
@@ -80,12 +78,7 @@ const ListDataEdit = ({location, history}) => {
                         )
                         }
                         <div>
-                            <Link to={{
-                                pathname: `/listData/edit/${article.name}`, state: {
-                                    firebaseCurrentDataArticle
-                                }
-                            }}><Button variant="contained" color="primary" onClick={(e) => submitEdit(e,article.name) }> sauvegarder changement</Button></Link>
-                            <Button variant="contained" color="secondary"> Supprimer Quiz</Button>
+                            <Button variant="contained" color="primary" onClick={(e) => submitEdit(e,article.name) }> sauvegarder changement</Button>
                         </div>
                     </Container>
                 )
