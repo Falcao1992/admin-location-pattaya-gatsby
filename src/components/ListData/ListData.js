@@ -103,17 +103,18 @@ const ListData = () => {
             {articleChoose && pageChoose && <Button type="button" onClick={clearStorageData}><RefreshIcon/></Button>}
 
             {firebaseCurrentDataArticle.length !== 0 && [firebaseCurrentDataArticle].map((article, index) => {
+                const {name, urlImage, articleTitle, location, type, content } = article;
                 return (
                     <div key={index}>
-                        <ArticleContent id={article.name}>
-                            <ArticleImage src={article.urlImage} alt={article.name}/>
-                            <ArticleLocation><span>{article.articleTitle}</span>{article.location}</ArticleLocation>
-                            <p>{article.content}</p>
-                            {article.type === "category" && <SeeMoreLink to="/"><span>voir plus ></span></SeeMoreLink>}
+                        <ArticleContent id={name}>
+                            <ArticleImage src={urlImage} alt={name}/>
+                            <ArticleLocation><span>{articleTitle}</span>{location}</ArticleLocation>
+                            <p>{content}</p>
+                            {type === "category" && <SeeMoreLink to="/"><span>voir plus ></span></SeeMoreLink>}
                         </ArticleContent>
                         {articleChoose && pageChoose && <ContainerButton>
                             <Link to={{
-                                pathname: `/listData/edit/${article.name}`, state: {
+                                pathname: `/listData/edit/${name}`, state: {
                                     firebaseCurrentDataArticle, pageChoose
                                 }
                             }}><Button variant="contained" color="primary"> modifier</Button></Link>
