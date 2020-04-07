@@ -4,6 +4,7 @@ import app from "../../firebase";
 import {Button, TextField, Container} from "@material-ui/core";
 import styled from "styled-components";
 import SidePanel from "../SidePanel/SidePanel";
+import Footer from "../SidePanel/Footer";
 
 const ListDataEdit = ({location, history}) => {
     const [currentDataEdit, setCurrentDataEdit] = useState({});
@@ -13,8 +14,6 @@ const ListDataEdit = ({location, history}) => {
         setCurrentDataEdit(firebaseCurrentDataArticle)
 
     }, [firebaseCurrentDataArticle]);
-
-    console.log(Object.entries(currentDataEdit))
 
     const handleEditData = (e, label) => {
         if (typeof currentDataEdit === 'object') {
@@ -36,10 +35,11 @@ const ListDataEdit = ({location, history}) => {
 
     return (
         <>
+            <SidePanel/>
             {currentDataEdit && [currentDataEdit].map((article, index) => {
                 return (
                     <Container fixed key={index}>
-                        <SidePanel/>
+
                         <div>
                             <ArticleContent id={article.name}>
                                 <ArticleImage src={article.urlImage} alt={article.name}/>
@@ -56,7 +56,7 @@ const ListDataEdit = ({location, history}) => {
                                             {value[0] === "content" || value[0] === "uid" || value[0] === "urlImage" || value[0] === "articleTitle"
                                         ?
                                                 <TextFieldStyledLarge
-                                                    disabled={(value[1] === "article" || value[0] === "uid" || value[0] === "name") && true}
+                                                    disabled={(value[0] === "uid" || value[0] === "urlImage") && true}
                                                     onChange={(e) => handleEditData(e, value[0])}
                                                     multiline rowsMax="4"
                                                     required label={value[0]}
@@ -64,44 +64,39 @@ const ListDataEdit = ({location, history}) => {
                                                 />
                                         :
                                                 <TextFieldStyled
-                                                disabled={(value[1] === "article" || value[0] === "uid" || value[0] === "name") && true}
+                                                disabled={(value[1] === "article" || value[0] === "uid" || value[0] === "name" || value[0] === "page") && true}
                                                 onChange={(e) => handleEditData(e, value[0])}
                                                 multiline rowsMax="2"
                                                 required label={value[0]}
                                                 defaultValue={value[1]}
                                                 />
                                             }
-
                                         </div>
-                                )
-                            }
-                        )
-                        }
+                                )})}
                         <div>
                             <Button variant="contained" color="primary" onClick={(e) => submitEdit(e,article.name) }> sauvegarder changement</Button>
                         </div>
                     </Container>
                 )
             })}
+            <Footer/>
         </>
     )
 };
 const TextFieldStyled = styled(TextField)`
-          width: calc(50% - 36px);
-          margin: 20px 0;
-          padding: 0 15px;
-          display: inline-block;
+        width: calc(50% - 36px);
+        padding-right: 25px;
+        margin: 15px 0;
+        display: inline-block;
     `;
 
 const TextFieldStyledLarge = styled(TextField)`
           width: 100%;
-          margin: 20px 0;
-          padding: 0 15px;
+          margin: 15px 0;
     `;
 
 const ArticleContent = styled.div`
-          width: 100%;
-          padding: 5px 10px;
+          width: 100%;     
           margin-bottom: 20px
     `;
 

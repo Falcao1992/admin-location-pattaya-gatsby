@@ -2,13 +2,16 @@ import React, {useState} from 'react';
 import {Link} from "react-router-dom";
 
 // Import Components of Material-Ui
-import {Drawer, Button, List, Divider, ListItem, ListItemText} from '@material-ui/core';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
+import {Drawer, Button, List, Divider, ListItem, ListItemText,ListItemIcon, makeStyles } from '@material-ui/core';
+
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
-import PeopleIcon from '@material-ui/icons/People';
 import HomeIcon from '@material-ui/icons/Home';
+import MenuIcon from '@material-ui/icons/Menu';
+import CreateIcon from '@material-ui/icons/Create';
+import ListIcon from '@material-ui/icons/List';
+import styled from "styled-components";
 import app from "../../firebase";
-import {makeStyles, Container} from '@material-ui/core';
+
 const useStyles = makeStyles({
     list: {
         width: 250,
@@ -46,8 +49,14 @@ const SidePanel = () => {
                 </Link>
                 <Link to="/listData">
                     <ListItem button>
-                        <ListItemIcon><PeopleIcon/></ListItemIcon>
-                        <ListItemText className={classes.listItem} primary="List Data"/>
+                        <ListItemIcon><ListIcon/></ListItemIcon>
+                        <ListItemText className={classes.listItem} primary="voir les articles"/>
+                    </ListItem>
+                </Link>
+                <Link to="/listData/create">
+                    <ListItem button>
+                        <ListItemIcon><CreateIcon/></ListItemIcon>
+                        <ListItemText className={classes.listItem} primary="creer un article"/>
                     </ListItem>
                 </Link>
                 <Divider/>
@@ -60,13 +69,26 @@ const SidePanel = () => {
     );
 
     return (
-        <Container fixed className="button_sidePanel">
-            <Button variant="outlined" color="primary" onClick={toggleDrawer(true)}>Open Menu</Button>
+        <SidePanelContainer>
+            <Button variant="outlined" onClick={toggleDrawer(true)}><MenuIcon/></Button>
+            <TitleSidePanel> Location Pattaya</TitleSidePanel>
             <Drawer open={open} onClose={toggleDrawer(false)}>
                 {sideList()}
             </Drawer>
-        </Container>
+        </SidePanelContainer>
     );
 };
 
+const SidePanelContainer = styled.div `
+        background-color: lightgray;
+        display: flex;
+        padding: 15px 10px;
+        margin-bottom: 30px;
+        justify-content: space-between;
+    `;
+
+const TitleSidePanel = styled.h2 `
+        margin: 0;  
+        padding-right: 5px;  
+    `
 export default SidePanel;
