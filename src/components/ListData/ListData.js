@@ -31,49 +31,31 @@ const useStyles = makeStyles((theme) => ({
 const ListData = () => {
     const classes = useStyles();
     const [firebaseAllData, setFirebaseAllData] = useState([]);
-    const [firebaseCurrentPageData, setFirebaseCurrentPageData] = useState([]);
-    const [firebaseCurrentDataArticle, setFirebaseCurrentDataArticle] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const [isDelete, setIsDelete] = useState(true);
 
     const [pageChoose, setPageChoose] = useLocalStorage("page choose", '');
     const [articleChoose, setArticleChoose] = useLocalStorage("article choose", '');
 
 
     useEffect(() => {
-        try {
-            const fetchData = async () => {
-                if (pageChoose === "") {
-                    console.log("first");
-                    return app.database().ref("/pagesPicturesData").on("value", function (snapshot) {
-                        setFirebaseAllData(Object.entries(snapshot.val()));
-                    });
-                } else if (pageChoose && !articleChoose) {
-                    console.log("second");
-                    return app.database().ref(`/pagesPicturesData/${pageChoose}`).on("value", function (snapshot) {
-                        setFirebaseCurrentPageData(Object.entries(snapshot.val()));
-                    });
-                } else if (articleChoose) {
-                    console.log("three");
-                    app.database().ref(`/pagesPicturesData/${pageChoose}/${articleChoose}`).on("value", function (snapshot) {
-                        setFirebaseCurrentDataArticle(snapshot.val());
-                    });
-                    if(articleChoose && firebaseAllData.length === 0) {
-                        app.database().ref("/pagesPicturesData").on("value", function (snapshot) {
-                            setFirebaseAllData(Object.entries(snapshot.val()));
-                        });
-                        app.database().ref(`/pagesPicturesData/${pageChoose}`).on("value", function (snapshot) {
-                            setFirebaseCurrentPageData(Object.entries(snapshot.val()));
-                        });
-                    }
-                }
-            };
-            fetchData()
+        const fetchData = async () => {
+            try {
+                setIsLoading(true);
 
-        } catch (e) {
-            console.error(e)
-        }
+                const dbRef = app.database().ref("/pagesPicturesData");
+                const snapshot =  await dbRef.once("value");
+                const value = snapshot.val();
+                setFirebaseAllData(value);
+                setIsLoading(false);
+                setIsDelete(false);
+            } catch (e) {
+                console.error(e)
+            }
+        };
+        fetchData()
 
-
-    }, [pageChoose, articleChoose]);
+    }, [isDelete]);
 
 
     const handlePageChoose = (e) => {
@@ -88,12 +70,52 @@ const ListData = () => {
 
     const deleteArticle = () => {
         app.database().ref(`/pagesPicturesData/${pageChoose}/${articleChoose}`).remove()
+        setIsDelete(true);
         setArticleChoose("");
         setPageChoose("");
 
     };
 
-    if (firebaseCurrentDataArticle.length === 0) {
+    const displayArticleSelect = (page) => {
+        if (pageChoose && isLoading === false) {
+            const dataSelectNamePage = firebaseAllData[page];
+            console.log(dataSelectNamePage, "dataSelectNamePage");
+            return Object.keys(dataSelectNamePage).map(nameArticle => <MenuItem key={nameArticle}
+                                                                                value={nameArticle}>{nameArticle}</MenuItem>)
+        }
+    };
+
+    const displayArticleData = (page, article) => {
+        if (pageChoose && articleChoose && isLoading === false) {
+
+            const dataArticle = firebaseAllData[page][article];
+
+            const {name, urlImage, articleTitle, location, type, content} = dataArticle;
+            return (
+                <div key={name}>
+                    <ArticleContent id={name}>
+                        <ArticleImage src={urlImage} alt={name}/>
+                        <ArticleLocation><span>{articleTitle}</span>{location}</ArticleLocation>
+                        <p>{content}</p>
+                        {type === "category" && <SeeMoreLink to="/"><span>voir plus ></span></SeeMoreLink>}
+                    </ArticleContent>
+                    {articleChoose && pageChoose && <ContainerButton>
+                        <Link to={{
+                            pathname: `/listData/edit/${name}`, state: {
+                                dataArticle, pageChoose
+                            }
+                        }}><Button variant="contained" color="primary"> modifier</Button></Link>
+
+                        <Button variant="contained" color="secondary"
+                                onClick={deleteArticle}> Supprimer</Button>
+                    </ContainerButton>}
+
+                </div>
+            )
+        }
+    };
+
+    if(isLoading) {
         return (
             <CircularLoadingContainer>
                 <CircularLoading/>
@@ -105,8 +127,9 @@ const ListData = () => {
         <>
             <SidePanel/>
             <Container fixed>
+
                 <SelectContainer>
-                    {(firebaseAllData || firebaseCurrentPageData.length !== 0) &&
+                    {firebaseAllData &&
                     <>
                         <FormControl className={classes.formControl}>
                             <InputLabel>pages</InputLabel>
@@ -114,7 +137,8 @@ const ListData = () => {
                                 value={pageChoose}
                                 onChange={(e) => handlePageChoose(e)}
                             >
-                                {firebaseAllData.map(([key]) => (<MenuItem key={key} value={key}>{key}</MenuItem>))}
+                                {Object.entries(firebaseAllData).map(([key]) => (
+                                    <MenuItem key={key} value={key}>{key}</MenuItem>))}
                             </Select>
                         </FormControl>
 
@@ -125,9 +149,10 @@ const ListData = () => {
                                 value={articleChoose}
                                 onChange={(e) => setArticleChoose(e.target.value)}
                             >
-                                {firebaseCurrentPageData.map(([key]) => (
-                                    <MenuItem key={key} value={key}>{key}</MenuItem>))}
+                                {displayArticleSelect(pageChoose)}
+
                             </Select>
+
                         </FormControl>
                         {articleChoose && pageChoose &&
                         <Button type="button" onClick={clearStorageData}><RefreshIcon/></Button>}
@@ -135,30 +160,8 @@ const ListData = () => {
                     }
                 </SelectContainer>
 
-                {firebaseCurrentDataArticle && [firebaseCurrentDataArticle].map((article, index) => {
-                    const {name, urlImage, articleTitle, location, type, content} = article;
-                    return (
-                        <div key={index}>
-                            <ArticleContent id={name}>
-                                <ArticleImage src={urlImage} alt={name}/>
-                                <ArticleLocation><span>{articleTitle}</span>{location}</ArticleLocation>
-                                <p>{content}</p>
-                                {type === "category" && <SeeMoreLink to="/"><span>voir plus ></span></SeeMoreLink>}
-                            </ArticleContent>
-                            {articleChoose && pageChoose && <ContainerButton>
-                                <Link to={{
-                                    pathname: `/listData/edit/${name}`, state: {
-                                        firebaseCurrentDataArticle, pageChoose
-                                    }
-                                }}><Button variant="contained" color="primary"> modifier</Button></Link>
+                {displayArticleData(pageChoose, articleChoose)}
 
-                                <Button variant="contained" color="secondary"
-                                        onClick={deleteArticle}> Supprimer</Button>
-                            </ContainerButton>}
-
-                        </div>
-                    )
-                })}
                 <CreateButtonContainer>
                     <Link to="/listData/create"><Button variant="contained" color="primary"> Creer un nouvelle
                         article</Button></Link>

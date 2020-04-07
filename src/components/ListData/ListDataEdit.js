@@ -8,12 +8,12 @@ import Footer from "../SidePanel/Footer";
 
 const ListDataEdit = ({location, history}) => {
     const [currentDataEdit, setCurrentDataEdit] = useState({});
-    const {firebaseCurrentDataArticle, pageChoose} = location.state;
+    const {dataArticle, pageChoose} = location.state;
 
     useEffect(() => {
-        setCurrentDataEdit(firebaseCurrentDataArticle)
+        setCurrentDataEdit(dataArticle)
 
-    }, [firebaseCurrentDataArticle]);
+    }, [dataArticle]);
 
     const handleEditData = (e, label) => {
         if (typeof currentDataEdit === 'object') {
@@ -37,15 +37,16 @@ const ListDataEdit = ({location, history}) => {
         <>
             <SidePanel/>
             {currentDataEdit && [currentDataEdit].map((article, index) => {
+                const {name, urlImage, articleTitle, location, type, content} = currentDataEdit;
                 return (
                     <Container fixed key={index}>
 
                         <div>
-                            <ArticleContent id={article.name}>
-                                <ArticleImage src={article.urlImage} alt={article.name}/>
-                                <ArticleLocation><span>{article.articleTitle}</span>{article.location}</ArticleLocation>
-                                <p>{article.content}</p>
-                                {article.type === "category" &&
+                            <ArticleContent id={name}>
+                                <ArticleImage src={urlImage} alt={name}/>
+                                <ArticleLocation><span>{articleTitle}</span>{location}</ArticleLocation>
+                                <p>{content}</p>
+                                {type === "category" &&
                                 <SeeMoreLink to="/"><span>voir plus ></span></SeeMoreLink>}
                             </ArticleContent>
 
