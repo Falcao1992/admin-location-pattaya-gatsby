@@ -16,6 +16,7 @@ import {
 import SidePanel from "../SidePanel/SidePanel";
 import styled from "styled-components";
 import Footer from "../SidePanel/Footer";
+import {toast} from "react-toastify";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -34,9 +35,10 @@ const ListData = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [isDelete, setIsDelete] = useState(true);
 
-    const [pageChoose, setPageChoose] = useLocalStorage("page choose", '');
-    const [articleChoose, setArticleChoose] = useLocalStorage("article choose", '');
+    const [pageChoose, setPageChoose] = useLocalStorage("page choose", "");
+    const [articleChoose, setArticleChoose] = useLocalStorage("article choose", "");
 
+    toast.configure();
 
     useEffect(() => {
         const fetchData = async () => {
@@ -44,9 +46,10 @@ const ListData = () => {
                 setIsLoading(true);
 
                 const dbRef = app.database().ref("/pagesPicturesData");
-                const snapshot =  await dbRef.once("value");
+                const snapshot = await dbRef.once("value");
                 const value = snapshot.val();
                 setFirebaseAllData(value);
+
                 setIsLoading(false);
                 setIsDelete(false);
             } catch (e) {
@@ -69,7 +72,15 @@ const ListData = () => {
     };
 
     const deleteArticle = () => {
-        app.database().ref(`/pagesPicturesData/${pageChoose}/${articleChoose}`).remove()
+        app.database().ref(`/pagesPicturesData/${pageChoose}/${articleChoose}`).remove();
+        toast.success(`l'Article ${articleChoose} de la page ${pageChoose} à été correctement supprimé !!!`, {
+            position: "top-right",
+            autoClose: 6000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true
+        });
         setIsDelete(true);
         setArticleChoose("");
         setPageChoose("");
@@ -87,9 +98,7 @@ const ListData = () => {
 
     const displayArticleData = (page, article) => {
         if (pageChoose && articleChoose && isLoading === false) {
-
             const dataArticle = firebaseAllData[page][article];
-
             const {name, urlImage, articleTitle, location, type, content} = dataArticle;
             return (
                 <div key={name}>
@@ -115,19 +124,26 @@ const ListData = () => {
         }
     };
 
-    if(isLoading) {
+    if (isLoading) {
         return (
-            <CircularLoadingContainer>
-                <CircularLoading/>
-            </CircularLoadingContainer>
+            <>
+                <SidePanel/>
+                <CircularLoadingContainer>
+                    <CircularLoading/>
+                </CircularLoadingContainer>
+            </>
         )
     }
+
 
     return (
         <>
             <SidePanel/>
             <Container fixed>
-
+                <div>
+                    <h1>Visionner tout mes articles</h1>
+                    <p>veuillez choisir une page ci-dessous, puis un article pour le visioner :</p>
+                </div>
                 <SelectContainer>
                     {firebaseAllData &&
                     <>
@@ -150,10 +166,9 @@ const ListData = () => {
                                 onChange={(e) => setArticleChoose(e.target.value)}
                             >
                                 {displayArticleSelect(pageChoose)}
-
                             </Select>
-
                         </FormControl>
+
                         {articleChoose && pageChoose &&
                         <Button type="button" onClick={clearStorageData}><RefreshIcon/></Button>}
                     </>
@@ -214,7 +229,7 @@ const ArticleImage = styled.img`
 const SeeMoreLink = styled(Link)`
         text-decoration: none;
             span {
-                color: #C89446;
+                color: ${props => props.theme.color.secondary};
                 &:hover {
                     text-decoration: underline;
                 }
@@ -230,7 +245,7 @@ const ArticleLocation = styled.h3`
            span {
             text-transform: none;
             font-family: 'pinyon script' , sans-serif;
-            color: #C89446;
+            color: ${props => props.theme.color.secondary};
             display: block;
             font-size: 2.1rem;
             letter-spacing: 1px;
@@ -240,7 +255,7 @@ const ArticleLocation = styled.h3`
             content: "";
             width: 24px;
             height: 2px;
-            background: #C89446;
+            background: ${props => props.theme.color.secondary};
             margin-bottom: 10px;
             clear: both;
         }  

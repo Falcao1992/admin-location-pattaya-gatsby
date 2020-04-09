@@ -80,7 +80,8 @@ const SidePanel = () => {
 };
 
 const SidePanelContainer = styled.div `
-        background-color: lightgray;
+        background-color: ${props => props.theme.color.primary};
+        color: ${props => props.theme.color.secondary};
         display: flex;
         padding: 15px 10px;
         margin-bottom: 30px;

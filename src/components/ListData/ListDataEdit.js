@@ -28,7 +28,7 @@ const ListDataEdit = ({location, history}) => {
         e.preventDefault();
         app.database().ref(`/pagesPicturesData/${pageChoose}`)
             .update({
-                [articleName] :currentDataEdit
+                [articleName]: currentDataEdit
             });
         history.push("/listData");
     };
@@ -36,6 +36,10 @@ const ListDataEdit = ({location, history}) => {
     return (
         <>
             <SidePanel/>
+            <div>
+                <h1>Editer un article existant</h1>
+                <p>veuillez remplir tout les champs non grisé svp :</p>
+            </div>
             {currentDataEdit && [currentDataEdit].map((article, index) => {
                 const {name, urlImage, articleTitle, location, type, content} = currentDataEdit;
                 return (
@@ -108,7 +112,7 @@ const ArticleImage = styled.img`
 const SeeMoreLink = styled(Link)`
         text-decoration: none;
             span {
-                color: #C89446;
+                color: ${props => props.theme.color.secondary};
                 &:hover {
                     text-decoration: underline;
                 }
@@ -124,7 +128,7 @@ const ArticleLocation = styled.h3`
            span {
             text-transform: none;
             font-family: 'pinyon script' , sans-serif;
-            color: #C89446;
+            color: ${props => props.theme.color.secondary};
             display: block;
             font-size: 2.1rem;
             letter-spacing: 1px;
@@ -134,7 +138,7 @@ const ArticleLocation = styled.h3`
             content: "";
             width: 24px;
             height: 2px;
-            background: #C89446;
+            background: ${props => props.theme.color.secondary};
             margin-bottom: 10px;
             clear: both;
         }  

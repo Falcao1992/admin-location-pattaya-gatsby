@@ -10,7 +10,7 @@ const Footer = () => {
 };
 
 const FooterContainer = styled.div`
-      background-color: lightgray;
+      background-color: ${props => props.theme.color.primary};
       height: 300px;
   `;
 export default Footer

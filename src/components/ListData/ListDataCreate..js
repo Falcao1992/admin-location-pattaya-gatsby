@@ -8,6 +8,7 @@ import useLocalStorage from "react-use-localstorage";
 import Footer from "../SidePanel/Footer";
 import {toast} from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
+import {toCamelCaseString} from "../globalFunction";
 
 const ListDataCreate = ({history}) => {
 
@@ -15,6 +16,8 @@ const ListDataCreate = ({history}) => {
     const [currentImageArticleFile, setCurrentImageArticleFile] = useState({});
     const [currentImage, setCurrentImage] = useState("");
     const [missingField, setMissingField] = useState(false);
+
+    const [nameBeforeTransform, setNameBeforeTransform] = useState("");
 
     const [pageChoose, setPageChoose] = useLocalStorage("page choose", "");
     const [articleChoose, setArticleChoose] = useLocalStorage("article choose", "");
@@ -44,9 +47,23 @@ const ListDataCreate = ({history}) => {
     }, []);
 
     const handleChange = (e) => {
-        setDataArticle({...dataArticle, [e.target.id]: e.target.value});
         if (e.target.id === "name") {
+            console.log("name")
+            setDataArticle({...dataArticle, [e.target.id]: e.target.value});
             setArticleChoose(e.target.value)
+        } else {
+            console.log("pas name")
+            setDataArticle({...dataArticle, [e.target.id]: e.target.value});
+        }
+    };
+
+    const handleChangeName = (e) => {
+        if (e.target.id === "name") {
+            setNameBeforeTransform(e.target.value)
+            let value = toCamelCaseString(e.target.value)
+            setDataArticle({...dataArticle, name: value});
+        } else {
+            console.log("pas name")
         }
     };
 
@@ -57,6 +74,7 @@ const ListDataCreate = ({history}) => {
 
     const sendData = () => {
         let copyDataArticle;
+        setArticleChoose(toCamelCaseString(nameBeforeTransform))
         const uploadTask = app.storage().ref(`${page}Picture/${name}`).put(currentImageArticleFile);
         uploadTask.on(`state_changed`,
             (snapshot) => {
@@ -117,7 +135,7 @@ const ListDataCreate = ({history}) => {
     };
 
     const onSubmit = async () => {
-        const result = await checkFormConform()
+        const result = await checkFormConform();
         console.log(result)
     };
 
@@ -135,7 +153,10 @@ const ListDataCreate = ({history}) => {
         <>
             <SidePanel/>
             <Container fixed>
-                <h1>ici vous pouvez creer et publier un article</h1>
+                <div>
+                    <h1>Creer un nouvel article</h1>
+                    <p>veuillez remplir tout les champs non grisé svp :</p>
+                </div>
                 <form autoComplete="off">
                     <div>
                         <InputLabel id="page">pages</InputLabel>
@@ -149,32 +170,47 @@ const ListDataCreate = ({history}) => {
                         >
                             {firebaseAllPage.map(([key]) => (<MenuItem key={key} value={key}>{key}</MenuItem>))}
                         </SelectStyled>
-                        {missingField && page === "" ? <IncorrectField>veuillez remplir ce champ*</IncorrectField> : page !== "" && missingField ?  <CorrectField>bien rempli*</CorrectField> : false}
+                        {missingField && page === "" ?
+                            <IncorrectField>veuillez remplir ce champ*</IncorrectField> : page !== "" && missingField ?
+                                <CorrectField>bien rempli*</CorrectField> : false}
 
                     </div>
 
                     <TextFieldStyled onChange={handleChange} value={articleTitle} required id="articleTitle"
                                      label="articleTitle" variant="outlined"
-                                     helperText={missingField && articleTitle === "" ? <small>veuillez remplir ce champ</small> : articleTitle !== "" && missingField ?  <CorrectField>bien rempli*</CorrectField> : false}
+                                     helperText={missingField && articleTitle === "" ? <small>veuillez remplir ce
+                                         champ</small> : articleTitle !== "" && missingField ?
+                                         <CorrectField>bien rempli*</CorrectField> : false}
                                      error={missingField && articleTitle === "" && true}
 
                     />
 
                     <TextFieldStyledLarge onChange={handleChange} value={content} required multiline rowsMax="4"
                                           id="content" label="content" variant="outlined"
-                                          helperText={missingField && content === "" ? "veuillez remplir ce champ" : content !== "" && missingField ?  <CorrectField>bien rempli*</CorrectField> : false}
+                                          helperText={missingField && content === "" ? "veuillez remplir ce champ" : content !== "" && missingField ?
+                                              <CorrectField>bien rempli*</CorrectField> : false}
                                           error={missingField && content === "" && true}
                     />
 
                     <TextFieldStyled onChange={handleChange} value={location} required id="location" label="location"
                                      variant="outlined"
-                                     helperText={missingField && location === "" ? "veuillez remplir ce champ" : location !== "" && missingField ?  <CorrectField>bien rempli*</CorrectField> : false}
+                                     helperText={missingField && location === "" ? "veuillez remplir ce champ" : location !== "" && missingField ?
+                                         <CorrectField>bien rempli*</CorrectField> : false}
                                      error={missingField && location === "" && true}
                     />
 
-                    <TextFieldStyled onChange={handleChange} value={name} required id="name" label="name"
+                    <TextFieldStyled onChange={handleChangeName} value={nameBeforeTransform} required id="name"
+                                     label="name"
                                      variant="outlined"
-                                     helperText={missingField && name === "" ? "veuillez remplir ce champ" : name !== "" && missingField ?  <CorrectField>bien rempli*</CorrectField> : false}
+                                     helperText={missingField && name === "" ? "veuillez remplir ce champ" : name !== "" && missingField ?
+                                         <CorrectField>bien rempli*</CorrectField> : false}
+                                     error={missingField && name === "" && true}
+                    />
+
+                    <TextFieldStyled value={name} disabled id="name" label="name final"
+                                     variant="outlined"
+                                     helperText={missingField && name === "" ? "veuillez remplir ce champ" : name !== "" && missingField ?
+                                         <CorrectField>bien rempli*</CorrectField> : false}
                                      error={missingField && name === "" && true}
                     />
 
@@ -183,7 +219,8 @@ const ListDataCreate = ({history}) => {
                     />
 
                     <Input type="file" margin='dense' required onChange={PreviewFile}
-                           helperText={missingField && currentImage === "" ? "veuillez remplir ce champ" : currentImage !== "" && missingField ?  <CorrectField>bien rempli*</CorrectField> : false}
+                           helperText={missingField && currentImage === "" ? "veuillez remplir ce champ" : currentImage !== "" && missingField ?
+                               <CorrectField>bien rempli*</CorrectField> : false}
                            error={missingField && currentImage === "" && true}/>
 
                     {currentImage !== "" && <CardMediaStyled title="Image de l'article" alt="article">
@@ -199,10 +236,10 @@ const ListDataCreate = ({history}) => {
         </>
     )
 };
-const CorrectField = styled.small `
+const CorrectField = styled.small`
           color: green
     `;
-const IncorrectField = styled.small `
+const IncorrectField = styled.small`
           color: red
     `;
 

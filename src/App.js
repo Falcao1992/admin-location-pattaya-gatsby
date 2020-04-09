@@ -11,8 +11,12 @@ import Login from "./components/Login/Login";
 import ListDataEdit from "./components/ListData/ListDataEdit";
 import ListDataCreate from "./components/ListData/ListDataCreate.";
 
+import theme from "./assets/theme";
+import {ThemeProvider} from "styled-components";
+
 function App() {
     return (
+        <ThemeProvider theme={theme}>
         <AuthProvider>
             <Router>
                 <Switch>
@@ -25,6 +29,7 @@ function App() {
                 </Switch>
             </Router>
         </AuthProvider>
+        </ThemeProvider>
     );
 }
 
