@@ -44,19 +44,19 @@ const SidePanel = () => {
                 <Link to="/">
                     <ListItem button>
                         <ListItemIcon><HomeIcon/></ListItemIcon>
-                        <ListItemText className={classes.listItem} primary="Home"/>
+                        <ListItemText className={classes.listItem} primary="Page d'acceuil"/>
                     </ListItem>
                 </Link>
                 <Link to="/listData">
                     <ListItem button>
                         <ListItemIcon><ListIcon/></ListItemIcon>
-                        <ListItemText className={classes.listItem} primary="voir les articles"/>
+                        <ListItemText className={classes.listItem} primary="Voir les articles"/>
                     </ListItem>
                 </Link>
                 <Link to="/listData/create">
                     <ListItem button>
                         <ListItemIcon><CreateIcon/></ListItemIcon>
-                        <ListItemText className={classes.listItem} primary="creer un article"/>
+                        <ListItemText className={classes.listItem} primary="Creer un article"/>
                     </ListItem>
                 </Link>
                 <Divider/>
@@ -89,6 +89,7 @@ const SidePanelContainer = styled.div `
     `;
 
 const TitleSidePanel = styled.h2 `
+        font-family: ${props => props.theme.font.title}, sans-serif;
         margin: 0;  
         padding-right: 5px;  
     `

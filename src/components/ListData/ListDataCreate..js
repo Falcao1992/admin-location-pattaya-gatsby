@@ -26,7 +26,7 @@ const ListDataCreate = ({history}) => {
         articleTitle: "",
         content: "",
         location: "",
-        date:"",
+        date: "",
         dateUpdated: "",
         name: "",
         page: "",
@@ -50,14 +50,7 @@ const ListDataCreate = ({history}) => {
     }, []);
 
     const handleChange = (e) => {
-        if (e.target.id === "name") {
-            console.log("name")
-            setDataArticle({...dataArticle, [e.target.id]: e.target.value});
-            setArticleChoose(e.target.value)
-        } else {
-            console.log("pas name")
-            setDataArticle({...dataArticle, [e.target.id]: e.target.value});
-        }
+        setDataArticle({...dataArticle, [e.target.id]: e.target.value});
     };
 
     const handleChangeName = (e) => {
@@ -145,24 +138,29 @@ const ListDataCreate = ({history}) => {
     };
 
     const PreviewFile = (e) => {
-        const file = e.target.files[0];
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onloadend = (event) => {
-            setCurrentImage(() => event.target.result)
-        };
-        setCurrentImageArticleFile(file);
+        try {
+            const file = e.target.files[0];
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onloadend = (event) => {
+                setCurrentImage(() => event.target.result)
+            };
+            setCurrentImageArticleFile(file);
+        } catch (error) {
+            console.error(error)
+        }
+
     };
 
     return (
         <>
             <SidePanel/>
             <Container fixed>
-                <div>
+                <PageBlockTitleDescription>
                     <h1>Creer un nouvel article</h1>
                     <p>veuillez remplir tout les champs non grisé svp :</p>
-                </div>
-                <form autoComplete="off">
+                </PageBlockTitleDescription>
+                <FormStyled autoComplete="off">
                     <div>
                         <InputLabel id="page">pages</InputLabel>
                         <SelectStyled
@@ -190,11 +188,11 @@ const ListDataCreate = ({history}) => {
 
                     />
 
-                    <TextFieldStyledLarge onChange={handleChange} value={content} required multiline rowsMax="4"
-                                          id="content" label="content" variant="outlined"
-                                          helperText={missingField && content === "" ? "veuillez remplir ce champ" : content !== "" && missingField ?
-                                              <CorrectField>bien rempli*</CorrectField> : false}
-                                          error={missingField && content === "" && true}
+                    <TextFieldStyled onChange={handleChange} value={content} required multiline rowsMax="4"
+                                     id="content" label="content" variant="outlined"
+                                     helperText={missingField && content === "" ? "veuillez remplir ce champ" : content !== "" && missingField ?
+                                         <CorrectField>bien rempli*</CorrectField> : false}
+                                     error={missingField && content === "" && true}
                     />
 
                     <TextFieldStyled onChange={handleChange} value={location} required id="location" label="location"
@@ -219,28 +217,35 @@ const ListDataCreate = ({history}) => {
                                      error={missingField && name === "" && true}
                     />
 
-                    <TextFieldStyledLarge value={uid} disabled multiline rowsMax="4" id="uid" label="uid"
-                                          variant="outlined"
+                    <TextFieldStyled value={uid} disabled multiline rowsMax="4" id="uid" label="uid"
+                                     variant="outlined"
                     />
 
                     <Input type="file" margin='dense' required onChange={PreviewFile}
-                           helperText={missingField && currentImage === "" ? "veuillez remplir ce champ" : currentImage !== "" && missingField ?
-                               <CorrectField>bien rempli*</CorrectField> : false}
                            error={missingField && currentImage === "" && true}/>
-
-                    {currentImage !== "" && <CardMediaStyled title="Image de l'article" alt="article">
+                    {currentImage !== "" &&
+                    <CardMediaStyled title="Image de l'article" alt="article">
                         <img src={currentImage} alt="article"/>
                     </CardMediaStyled>
                     }
 
                     <ButtonCreate variant="contained" onClick={onSubmit} color="primary"
                                   aria-label="edit">create</ButtonCreate>
-                </form>
+                </FormStyled>
             </Container>
             <Footer/>
         </>
     )
 };
+
+const PageBlockTitleDescription = styled.div`
+        margin-bottom: 20px;
+        h1 {
+        font-family: ${props => props.theme.font.title}, sans-serif;
+        font-size: 1.7em;     
+        }      
+    `;
+
 const CorrectField = styled.small`
           color: green
     `;
@@ -249,22 +254,25 @@ const IncorrectField = styled.small`
     `;
 
 const ButtonCreate = styled(Button)`
-          margin: 25px 0;
-    `;
-const TextFieldStyled = styled(TextField)`
-        width: calc(50% - 36px);
-        padding-right: 25px;
-        margin: 15px 0;
-        display: inline-block;
+          margin-top: 15px !important;
     `;
 
-const TextFieldStyledLarge = styled(TextField)`
-          width: 100%;
-          margin: 15px 0;
-    `;
+const FormStyled = styled.form`
+        display: flex;
+        flex-direction: column;        
+         input {
+             margin-bottom: 15px;
+         }
+        `;
 
 const SelectStyled = styled(Select)`
           width: 100%;
+          margin-bottom: 15px;
+    `;
+
+const TextFieldStyled = styled(TextField)`
+        width: 100%;
+        margin-bottom: 15px !important;                     
     `;
 
 const CardMediaStyled = styled(CardMedia)`

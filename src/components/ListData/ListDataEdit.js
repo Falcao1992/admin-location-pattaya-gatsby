@@ -4,7 +4,7 @@ import {Button, Container, TextField} from "@material-ui/core";
 import styled from "styled-components";
 import SidePanel from "../SidePanel/SidePanel";
 import Footer from "../SidePanel/Footer";
-import {ArticleContent, ArticleLocation, SeeMoreLink} from "../SidePanel/StyledComponents/ArticlePreview";
+import {ArticleContent, ArticleLocation, SeeMoreLink} from "../StyledComponents/ArticlePreview";
 import moment from "moment";
 
 const ListDataEdit = ({location, history}) => {
@@ -38,7 +38,6 @@ const ListDataEdit = ({location, history}) => {
     return (
         <>
             <SidePanel/>
-
             {currentDataEdit && [currentDataEdit].map((article, index) => {
                 const {name, urlImage, articleTitle, location, type, content} = currentDataEdit;
                 return (
@@ -60,24 +59,13 @@ const ListDataEdit = ({location, history}) => {
                         {currentDataEdit && Object.entries(currentDataEdit).map((value, index) => {
                                 return (
                                         <div key={index}>
-                                            {value[0] === "content" || value[0] === "uid" || value[0] === "urlImage" || value[0] === "articleTitle"
-                                        ?
-                                                <TextFieldStyledLarge
-                                                    disabled={(value[0] === "uid" || value[0] === "urlImage") && true}
-                                                    onChange={(e) => handleEditData(e, value[0])}
-                                                    multiline rowsMax="4"
-                                                    required label={value[0]}
-                                                    defaultValue={value[1]}
-                                                />
-                                        :
                                                 <TextFieldStyled
-                                                disabled={(value[1] === "article" || value[0] === "uid" || value[0] === "name" || value[0] === "page") && true}
+                                                disabled={(value[1] === "article" || value[0] === "uid" || value[0] === "name" || value[0] === "page" || value[0] === "uid" || value[0] === "urlImage") && true}
                                                 onChange={(e) => handleEditData(e, value[0])}
                                                 multiline rowsMax="2"
                                                 required label={value[0]}
                                                 defaultValue={value[1]}
                                                 />
-                                            }
                                         </div>
                                 )})}
                         <div>
@@ -91,25 +79,17 @@ const ListDataEdit = ({location, history}) => {
     )
 };
 const PageBlockTitleDescription = styled.div`
+        margin-bottom: 20px;
         h1 {
-        font-family: 'Roboto', sans-serif;
+        font-family: ${props => props.theme.font.title}, sans-serif;
         font-size: 1.7em;     
-        }
-        p {
-            margin-bottom: 20px;
-        }
+        }      
     `;
 
 const TextFieldStyled = styled(TextField)`
-        width: calc(50% - 36px);
-        padding-right: 25px;
-        margin: 15px 0;
-        display: inline-block;
+        width: 100%;
+        margin-bottom: 15px !important;  
     `;
 
-const TextFieldStyledLarge = styled(TextField)`
-          width: 100%;
-          margin: 15px 0;
-    `;
 
 export default ListDataEdit

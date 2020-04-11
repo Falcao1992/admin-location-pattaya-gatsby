@@ -4,7 +4,7 @@ import {makeStyles} from '@material-ui/core/styles';
 import {Link} from "react-router-dom";
 import useLocalStorage from 'react-use-localstorage';
 import RefreshIcon from '@material-ui/icons/Refresh';
-import CircularProgress from '@material-ui/core/CircularProgress';
+import {CircularLoadingContainer, CircularLoading} from "../StyledComponents/Loader";
 
 
 import {
@@ -17,7 +17,7 @@ import SidePanel from "../SidePanel/SidePanel";
 import styled from "styled-components";
 import Footer from "../SidePanel/Footer";
 import {toast} from "react-toastify";
-import {ArticleContent, ArticleLocation, SeeMoreLink} from "../SidePanel/StyledComponents/ArticlePreview";
+import {ArticleContent, ArticleLocation, SeeMoreLink} from "../StyledComponents/ArticlePreview";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -135,7 +135,6 @@ const ListData = () => {
         )
     }
 
-
     return (
         <>
             <SidePanel/>
@@ -187,34 +186,15 @@ const ListData = () => {
         </>
     )
 };
-const CircularLoadingContainer = styled.div`
-        height: 100vh;
-        display: flex;
-            div {
-                height: 0;
-                width: 0;
-                display: table;
-            }
-            svg{
-                height: 90px;
-            }
-    `;
 
-const CircularLoading = styled(CircularProgress)`
-        margin: 0 auto;
-        align-self: center;
-    `;
 
 const PageBlockTitleDescription = styled.div`
+        margin-bottom: 20px;
         h1 {
-        font-family: 'Roboto', sans-serif;
+        font-family: ${props => props.theme.font.title}, sans-serif;
         font-size: 1.7em;     
-        }
-        p {
-            margin-bottom: 20px;
-        }
+        }      
     `;
-
 
 const SelectContainer = styled.div`
         display: flex;
