@@ -2,7 +2,7 @@ import React, {useCallback, useContext} from "react";
 import {withRouter, Redirect} from "react-router";
 import app from "../../firebase";
 import {AuthContext} from "../Auth";
-import {Input, Button, Container} from '@material-ui/core';
+import {Input, Button} from '@material-ui/core';
 import styled from "styled-components";
 
 const Login = ({history}) => {

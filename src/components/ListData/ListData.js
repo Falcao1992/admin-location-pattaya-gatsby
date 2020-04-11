@@ -17,6 +17,7 @@ import SidePanel from "../SidePanel/SidePanel";
 import styled from "styled-components";
 import Footer from "../SidePanel/Footer";
 import {toast} from "react-toastify";
+import {ArticleContent, ArticleLocation, SeeMoreLink} from "../SidePanel/StyledComponents/ArticlePreview";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -44,7 +45,6 @@ const ListData = () => {
         const fetchData = async () => {
             try {
                 setIsLoading(true);
-
                 const dbRef = app.database().ref("/pagesPicturesData");
                 const snapshot = await dbRef.once("value");
                 const value = snapshot.val();
@@ -103,7 +103,7 @@ const ListData = () => {
             return (
                 <div key={name}>
                     <ArticleContent id={name}>
-                        <ArticleImage src={urlImage} alt={name}/>
+                        <img src={urlImage} alt={name}/>
                         <ArticleLocation><span>{articleTitle}</span>{location}</ArticleLocation>
                         <p>{content}</p>
                         {type === "category" && <SeeMoreLink to="/"><span>voir plus ></span></SeeMoreLink>}
@@ -140,10 +140,10 @@ const ListData = () => {
         <>
             <SidePanel/>
             <Container fixed>
-                <div>
+                <PageBlockTitleDescription>
                     <h1>Visionner tout mes articles</h1>
-                    <p>veuillez choisir une page ci-dessous, puis un article pour le visioner :</p>
-                </div>
+                    <p>Veuillez choisir une page ci-dessous, puis un article pour le visioner :</p>
+                </PageBlockTitleDescription>
                 <SelectContainer>
                     {firebaseAllData &&
                     <>
@@ -205,10 +205,24 @@ const CircularLoading = styled(CircularProgress)`
         align-self: center;
     `;
 
+const PageBlockTitleDescription = styled.div`
+        h1 {
+        font-family: 'Roboto', sans-serif;
+        font-size: 1.7em;     
+        }
+        p {
+            margin-bottom: 20px;
+        }
+    `;
+
+
 const SelectContainer = styled.div`
         display: flex;
         flex-direction: row;
         justify-content: space-evenly;
+        background-color: ${props => props.theme.color.primary};
+        margin-bottom: 20px;
+        padding: 15px 0;
     `;
 
 const CreateButtonContainer = styled.div`
@@ -216,50 +230,8 @@ const CreateButtonContainer = styled.div`
         display: flex;
         margin: 20px;
     `;
-const ArticleContent = styled.div`
-          width: 100%;
-          padding: 5px 0;
-          margin-bottom: 20px
-    `;
 
-const ArticleImage = styled.img`
-          width: 100%      
-    `;
 
-const SeeMoreLink = styled(Link)`
-        text-decoration: none;
-            span {
-                color: ${props => props.theme.color.secondary};
-                &:hover {
-                    text-decoration: underline;
-                }
-            }
-    `;
-
-const ArticleLocation = styled.h3`
-        font-size: 0.9rem;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        line-height: 1.2;
-        margin-left: 5px;
-           span {
-            text-transform: none;
-            font-family: 'pinyon script' , sans-serif;
-            color: ${props => props.theme.color.secondary};
-            display: block;
-            font-size: 2.1rem;
-            letter-spacing: 1px;
-           }
-        &::before {
-            display: block;
-            content: "";
-            width: 24px;
-            height: 2px;
-            background: ${props => props.theme.color.secondary};
-            margin-bottom: 10px;
-            clear: both;
-        }  
-    `;
 const ContainerButton = styled.div`
       display: flex;
       justify-content: space-between;

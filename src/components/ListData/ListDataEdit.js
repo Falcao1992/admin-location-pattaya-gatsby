@@ -1,10 +1,11 @@
 import React, {useEffect, useState} from "react";
-import {Link} from "react-router-dom";
 import app from "../../firebase";
-import {Button, TextField, Container} from "@material-ui/core";
+import {Button, Container, TextField} from "@material-ui/core";
 import styled from "styled-components";
 import SidePanel from "../SidePanel/SidePanel";
 import Footer from "../SidePanel/Footer";
+import {ArticleContent, ArticleLocation, SeeMoreLink} from "../SidePanel/StyledComponents/ArticlePreview";
+import moment from "moment";
 
 const ListDataEdit = ({location, history}) => {
     const [currentDataEdit, setCurrentDataEdit] = useState({});
@@ -26,6 +27,7 @@ const ListDataEdit = ({location, history}) => {
 
     const submitEdit = (e,articleName) => {
         e.preventDefault();
+        currentDataEdit.dateUpdated = moment().format();
         app.database().ref(`/pagesPicturesData/${pageChoose}`)
             .update({
                 [articleName]: currentDataEdit
@@ -36,18 +38,18 @@ const ListDataEdit = ({location, history}) => {
     return (
         <>
             <SidePanel/>
-            <div>
-                <h1>Editer un article existant</h1>
-                <p>veuillez remplir tout les champs non grisé svp :</p>
-            </div>
+
             {currentDataEdit && [currentDataEdit].map((article, index) => {
                 const {name, urlImage, articleTitle, location, type, content} = currentDataEdit;
                 return (
                     <Container fixed key={index}>
-
+                        <PageBlockTitleDescription>
+                            <h1>Editer un article existant</h1>
+                            <p>veuillez remplir tout les champs non grisé svp :</p>
+                        </PageBlockTitleDescription>
                         <div>
                             <ArticleContent id={name}>
-                                <ArticleImage src={urlImage} alt={name}/>
+                                <img src={urlImage} alt={name}/>
                                 <ArticleLocation><span>{articleTitle}</span>{location}</ArticleLocation>
                                 <p>{content}</p>
                                 {type === "category" &&
@@ -88,6 +90,16 @@ const ListDataEdit = ({location, history}) => {
         </>
     )
 };
+const PageBlockTitleDescription = styled.div`
+        h1 {
+        font-family: 'Roboto', sans-serif;
+        font-size: 1.7em;     
+        }
+        p {
+            margin-bottom: 20px;
+        }
+    `;
+
 const TextFieldStyled = styled(TextField)`
         width: calc(50% - 36px);
         padding-right: 25px;
@@ -100,47 +112,4 @@ const TextFieldStyledLarge = styled(TextField)`
           margin: 15px 0;
     `;
 
-const ArticleContent = styled.div`
-          width: 100%;     
-          margin-bottom: 20px
-    `;
-
-const ArticleImage = styled.img`
-          width: 100%      
-    `;
-
-const SeeMoreLink = styled(Link)`
-        text-decoration: none;
-            span {
-                color: ${props => props.theme.color.secondary};
-                &:hover {
-                    text-decoration: underline;
-                }
-            }
-    `;
-
-const ArticleLocation = styled.h3`
-        font-size: 0.9rem;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        line-height: 1.2;
-        margin-left: 5px;
-           span {
-            text-transform: none;
-            font-family: 'pinyon script' , sans-serif;
-            color: ${props => props.theme.color.secondary};
-            display: block;
-            font-size: 2.1rem;
-            letter-spacing: 1px;
-           }
-        &::before {
-            display: block;
-            content: "";
-            width: 24px;
-            height: 2px;
-            background: ${props => props.theme.color.secondary};
-            margin-bottom: 10px;
-            clear: both;
-        }  
-    `;
 export default ListDataEdit

@@ -56,8 +56,9 @@ function toCamelCase(inputArray) {
 
 export function toCamelCaseString(input) {
 
-    let words = toWords(input);
-
-    return toCamelCase(words);
+    if(input !== "") {
+        let words = toWords(input);
+        return toCamelCase(words);
+    }
 
 }

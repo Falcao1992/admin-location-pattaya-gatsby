@@ -9,6 +9,7 @@ import Footer from "../SidePanel/Footer";
 import {toast} from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import {toCamelCaseString} from "../globalFunction";
+import moment from "moment";
 
 const ListDataCreate = ({history}) => {
 
@@ -25,6 +26,8 @@ const ListDataCreate = ({history}) => {
         articleTitle: "",
         content: "",
         location: "",
+        date:"",
+        dateUpdated: "",
         name: "",
         page: "",
         type: "article",
@@ -74,7 +77,9 @@ const ListDataCreate = ({history}) => {
 
     const sendData = () => {
         let copyDataArticle;
-        setArticleChoose(toCamelCaseString(nameBeforeTransform))
+        dataArticle.date = moment().format();
+        dataArticle.dateUpdated = moment().format();
+        setArticleChoose(toCamelCaseString(nameBeforeTransform));
         const uploadTask = app.storage().ref(`${page}Picture/${name}`).put(currentImageArticleFile);
         uploadTask.on(`state_changed`,
             (snapshot) => {
