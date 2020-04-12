@@ -4,7 +4,6 @@ import {Button, TextField, Container, Input, MenuItem, Select, InputLabel, CardM
 import styled from "styled-components";
 import SidePanel from "../SidePanel/SidePanel";
 import {nanoid} from 'nanoid'
-import useLocalStorage from "react-use-localstorage";
 import Footer from "../SidePanel/Footer";
 import {toast} from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
@@ -20,8 +19,6 @@ const ListDataCreate = ({history}) => {
 
     const [nameBeforeTransform, setNameBeforeTransform] = useState("");
 
-    const [pageChoose, setPageChoose] = useLocalStorage("page choose", "");
-    const [articleChoose, setArticleChoose] = useLocalStorage("article choose", "");
     const data = {
         articleTitle: "",
         content: "",
@@ -55,8 +52,8 @@ const ListDataCreate = ({history}) => {
 
     const handleChangeName = (e) => {
         if (e.target.id === "name") {
-            setNameBeforeTransform(e.target.value)
-            let value = toCamelCaseString(e.target.value)
+            setNameBeforeTransform(e.target.value);
+            let value = toCamelCaseString(e.target.value);
             setDataArticle({...dataArticle, name: value});
         } else {
             console.log("pas name")
@@ -65,14 +62,14 @@ const ListDataCreate = ({history}) => {
 
     const handleChangePage = (e) => {
         setDataArticle({...dataArticle, page: e.target.value});
-        setPageChoose(e.target.value)
+        localStorage.setItem("page choose", e.target.value)
     };
 
     const sendData = () => {
         let copyDataArticle;
         dataArticle.date = moment().format();
         dataArticle.dateUpdated = moment().format();
-        setArticleChoose(toCamelCaseString(nameBeforeTransform));
+        localStorage.setItem("article choose", toCamelCaseString(nameBeforeTransform));
         const uploadTask = app.storage().ref(`${page}Picture/${name}`).put(currentImageArticleFile);
         uploadTask.on(`state_changed`,
             (snapshot) => {

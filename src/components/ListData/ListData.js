@@ -73,7 +73,7 @@ const ListData = () => {
 
     const deleteArticle = () => {
         app.database().ref(`/pagesPicturesData/${pageChoose}/${articleChoose}`).remove();
-        toast.success(`l'Article ${articleChoose} de la page ${pageChoose} à été correctement supprimé !!!`, {
+        toast.success(`L'article ${articleChoose} de la page ${pageChoose} à été correctement supprimé !!!`, {
             position: "top-right",
             autoClose: 6000,
             hideProgressBar: false,
