@@ -72,15 +72,26 @@ const ListData = () => {
     };
 
     const deleteArticle = () => {
-        app.database().ref(`/pagesPicturesData/${pageChoose}/${articleChoose}`).remove();
-        toast.success(`L'article ${articleChoose} de la page ${pageChoose} à été correctement supprimé !!!`, {
-            position: "top-right",
-            autoClose: 6000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true
+        // Create a reference to the file to delete
+        const imageStorage = app.storage().ref(`${pageChoose}Picture/${articleChoose}`);
+        // Delete the file
+        imageStorage.delete()
+            .then(() => {
+                toast.success(`L'article ${articleChoose} de la page ${pageChoose} à été correctement supprimé !!!`, {
+                    position: "top-right",
+                    autoClose: 6000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true
+                });
+            })
+            .catch((error) => {
+            console.error(error)
         });
+        app.database().ref(`/pagesPicturesData/${pageChoose}/${articleChoose}`).remove();
+
+
         setIsDelete(true);
         setArticleChoose("");
         setPageChoose("");

@@ -137,6 +137,7 @@ const ListDataCreate = ({history}) => {
     const PreviewFile = (e) => {
         try {
             const file = e.target.files[0];
+            console.log(file, "file")
             const reader = new FileReader();
             reader.readAsDataURL(file);
             reader.onloadend = (event) => {
