@@ -165,7 +165,6 @@ const ListDataCreate = ({history}) => {
                             onChange={handleChangePage}
                             value={page}
                             variant="outlined"
-
                             error={missingField && page === "" && true}
                         >
                             {firebaseAllPage.map(([key]) => (<MenuItem key={key} value={key}>{key}</MenuItem>))}
@@ -226,7 +225,7 @@ const ListDataCreate = ({history}) => {
                     </CardMediaStyled>
                     }
 
-                    <ButtonCreate variant="contained" onClick={onSubmit} color="primary"
+                    <ButtonCreate variant="contained" type="button" onClick={onSubmit} color="primary"
                                   aria-label="edit">create</ButtonCreate>
                 </FormStyled>
             </Container>
