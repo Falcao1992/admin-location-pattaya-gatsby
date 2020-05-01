@@ -9,7 +9,7 @@ import PrivateRoute from "./components/PrivateRoute";
 import {AuthProvider} from "./components/Auth";
 import Login from "./components/Login/Login";
 import ListDataEdit from "./components/ListData/ListDataEdit";
-import ListDataCreate from "./components/ListData/ListDataCreate.";
+import ListDataCreate from "./components/ListData/ListDataCreate";
 import ListMessages from "./components/ListMessages/ListMessages";
 import ListOneMessage from "./components/ListMessages/ListOneMessage";
 

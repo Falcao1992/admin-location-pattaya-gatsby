@@ -3,11 +3,13 @@ import SidePanel from "../SidePanel/SidePanel";
 import {Container} from "@material-ui/core";
 import app from "../../firebase";
 import {ListMessagesTables} from "./ListMessagesTable";
+import {CircularLoadingContainer, CircularLoading} from "../StyledComponents/Loader";
 
 const ListMessages = () => {
 
     const [firebaseAllDataMessages, setFirebaseAllDataMessages] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
+
 
     useEffect(() => {
         const fetchDataMessages = async () => {
@@ -26,6 +28,17 @@ const ListMessages = () => {
         fetchDataMessages()
 
     }, []);
+
+    if (isLoading) {
+        return (
+            <>
+                <SidePanel/>
+                <CircularLoadingContainer>
+                    <CircularLoading/>
+                </CircularLoadingContainer>
+            </>
+        )
+    }
 
     return (
         <>

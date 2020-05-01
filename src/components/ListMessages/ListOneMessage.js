@@ -1,15 +1,14 @@
 import React from "react";
+import moment from "moment";
 
 const ListOneMessage = (props) => {
-
-    const {keyMessage} = props.match.params;
+    //const {keyMessage} = props.match.params;
     const {message} = props.location.state;
 
     return (
         <>
             <h2>salut votre message ...</h2>
-            {console.log(keyMessage)}
-            {console.log(Object.entries(message))}
+            <p>{moment(message.dateMessage).fromNow()}</p>
             {Object.entries(message).map(([key, msg]) => {
                         return (
                             <div key={key}>

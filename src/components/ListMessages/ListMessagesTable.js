@@ -2,25 +2,33 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
 import {lighten, makeStyles} from '@material-ui/core/styles';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableContainer from '@material-ui/core/TableContainer';
-import TableHead from '@material-ui/core/TableHead';
-import TablePagination from '@material-ui/core/TablePagination';
-import TableRow from '@material-ui/core/TableRow';
-import TableSortLabel from '@material-ui/core/TableSortLabel';
-import Toolbar from '@material-ui/core/Toolbar';
-import Typography from '@material-ui/core/Typography';
-import Paper from '@material-ui/core/Paper';
-import Checkbox from '@material-ui/core/Checkbox';
-import IconButton from '@material-ui/core/IconButton';
-import Tooltip from '@material-ui/core/Tooltip';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Switch from '@material-ui/core/Switch';
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TableHead,
+    TablePagination,
+    TableRow,
+    TableSortLabel,
+    Toolbar,
+    Typography,
+    Paper,
+    Checkbox,
+    IconButton,
+    Tooltip,
+    FormControlLabel,
+    Switch
+} from '@material-ui/core';
 import DeleteIcon from '@material-ui/icons/Delete';
 import FilterListIcon from '@material-ui/icons/FilterList';
 import {Link} from "react-router-dom";
+import styled from "styled-components";
+
+import moment from "moment";
+import 'moment/locale/fr';
+
+moment.locale('fr');
 
 
 const descendingComparator = (a, b, orderBy) => {
@@ -56,6 +64,7 @@ const headCells = [
     {id: 'numberPeople', numeric: true, disablePadding: false, label: 'Nb. de Personne'},
     {id: 'phoneNumber', numeric: true, disablePadding: false, label: 'n° de Téléphone'},
     {id: 'mail', numeric: false, disablePadding: false, label: 'Email'},
+    {id: 'dateMessage', numeric: false, disablePadding: false, label: 'Date du Message'},
 ];
 
 const EnhancedTableHead = (props) => {
@@ -93,7 +102,7 @@ const EnhancedTableHead = (props) => {
                                 <span className={classes.visuallyHidden}>
                                     {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
                                 </span>
-                                ) : null}
+                            ) : null}
                         </TableSortLabel>
                     </TableCell>
                 ))}
@@ -289,7 +298,7 @@ export const ListMessagesTables = ({dataMessages}) => {
                                     const regex = new RegExp("-", "g");
                                     console.log("message", message);
                                     return (
-                                        <TableRow
+                                        <TableRowStyled
                                             hover
                                             onClick={(event) => handleClick(event, index)}
                                             role="checkbox"
@@ -297,6 +306,7 @@ export const ListMessagesTables = ({dataMessages}) => {
                                             tabIndex={-1}
                                             key={index}
                                             selected={isItemSelected}
+                                            isread={message.read === "false" ? "false" : "true"}
                                         >
                                             <TableCell padding="checkbox">
                                                 <Checkbox
@@ -310,14 +320,18 @@ export const ListMessagesTables = ({dataMessages}) => {
                                             <TableCell align="right">{message.firstName}</TableCell>
                                             <TableCell align="right">
                                                 <Link to={{
-                                                    pathname:`/listOneMessages/${message.key.replace(regex, "")}`,
-                                                    state:{message}}}>{message.message}
+                                                    pathname: `/listOneMessages/${message.key.replace(regex, "")}`,
+                                                    state: {message}
+                                                }}>{message.message}
                                                 </Link>
                                             </TableCell>
                                             <TableCell align="right">{message.numberPeople}</TableCell>
-                                            <TableCell align="right"><a href={`tel:${message.phoneNumber}`}>{message.phoneNumber}</a></TableCell>
-                                            <TableCell align="right"><a href={`mailto:${message.mail}`}>{message.mail}</a></TableCell>
-                                        </TableRow>
+                                            <TableCell align="right"><a
+                                                href={`tel:${message.phoneNumber}`}>{message.phoneNumber}</a></TableCell>
+                                            <TableCell align="right"><a
+                                                href={`mailto:${message.mail}`}>{message.mail}</a></TableCell>
+                                            <TableCell align="right">{moment(message.dateMessage).fromNow()}</TableCell>
+                                        </TableRowStyled>
                                     );
 
                                 })}
@@ -346,3 +360,7 @@ export const ListMessagesTables = ({dataMessages}) => {
         </div>
     );
 };
+
+const TableRowStyled = styled(TableRow)`
+    background-color: ${props => props.isread === "true" ? "none" : "#2c77d021"};
+    `;

@@ -5,10 +5,9 @@ import Footer from "../SidePanel/Footer";
 import app from "../../firebase";
 import styled from "styled-components";
 import {CircularLoadingContainer, CircularLoading} from "../StyledComponents/Loader";
-import {Link} from "react-router-dom";
 import {Container} from "@material-ui/core";
 
-const Home = () => {
+const Home = ({history}) => {
     const [dataImages, setDataImage] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
 
@@ -49,6 +48,12 @@ const Home = () => {
 
     }, []);
 
+    const handleLinkToArticle = (img) => {
+        localStorage.setItem("article choose", img.name);
+        localStorage.setItem("page choose", img.page);
+        history.push("/listData");
+    };
+
 
     if (isLoading) {
         return (
@@ -67,17 +72,15 @@ const Home = () => {
             <Container fixed>
             <SectionHomeCreate>
                 <TitleSection>Voir mes articles :</TitleSection>
-                <Link to="/listData">
                     <WrapperGrid>
                         {dataImages.length !== 0 && dataImages.map(image => {
                             return (
-                                <ContainerImageGrid key={image.name}>
+                                <ContainerImageGrid key={image.name} onClick={() => handleLinkToArticle(image)} >
                                     <img src={image.urlImage} alt={image.name}/>
                                 </ContainerImageGrid>
                             )
                         })}
                     </WrapperGrid>
-                </Link>
             </SectionHomeCreate>
             </Container>
             <Footer/>
@@ -111,7 +114,7 @@ const ContainerImageGrid = styled.div`
             object-fit: cover;
             width: 100%;
             height: 100%;
-            vertical-align: middle;           
+            vertical-align: middle;        
         }
   `;
 
