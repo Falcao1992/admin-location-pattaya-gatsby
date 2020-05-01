@@ -317,7 +317,7 @@ export const ListMessagesTables = ({dataMessages}) => {
                                                 </Link>
                                             </TableCell>
                                             <TableCell align="right">{message.numberPeople}</TableCell>
-                                            <TableCell align="right">{message.phoneNumber}</TableCell>
+                                            <TableCell align="right"><a href={`tel:${message.phoneNumber}`}>{message.phoneNumber}</a></TableCell>
                                             <TableCell align="right"><a href={`mailto:${message.mail}`}>{message.mail}</a></TableCell>
                                         </TableRow>
                                     );

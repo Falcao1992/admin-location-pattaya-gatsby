@@ -9,7 +9,16 @@ const ListOneMessage = (props) => {
         <>
             <h2>salut votre message ...</h2>
             {console.log(keyMessage)}
-            {console.log(message)}
+            {console.log(Object.entries(message))}
+            {Object.entries(message).map(([key, msg]) => {
+                        return (
+                            <div key={key}>
+                                <h4>{key}</h4>
+                                <p>{msg}</p>
+                            </div>
+                        )
+                    })
+                }
 
         </>
     )
