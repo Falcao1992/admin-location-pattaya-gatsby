@@ -10,6 +10,8 @@ import {AuthProvider} from "./components/Auth";
 import Login from "./components/Login/Login";
 import ListDataEdit from "./components/ListData/ListDataEdit";
 import ListDataCreate from "./components/ListData/ListDataCreate.";
+import ListMessages from "./components/ListMessages/ListMessages";
+import ListOneMessage from "./components/ListMessages/ListOneMessage";
 
 import theme from "./assets/theme";
 import {ThemeProvider} from "styled-components";
@@ -25,6 +27,8 @@ function App() {
                     <PrivateRoute exact path="/listData" component={ListData}/>
                     <PrivateRoute exact path="/listData/create" component={ListDataCreate}/>
                     <PrivateRoute exact path="/listData/edit/:articleName" component={ListDataEdit}/>
+                    <PrivateRoute exact path="/listMessages" component={ListMessages}/>
+                    <PrivateRoute exact path="/listOneMessages/:keyMessage" component={ListOneMessage}/>
                     <Route component={NoMatch}/>
                 </Switch>
             </Router>
