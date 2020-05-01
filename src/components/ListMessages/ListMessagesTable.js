@@ -200,14 +200,13 @@ const useStyles = makeStyles((theme) => ({
 export const ListMessagesTables = ({dataMessages}) => {
     const classes = useStyles();
     const [order, setOrder] = React.useState('asc');
-    const [orderBy, setOrderBy] = React.useState('calories');
+    const [orderBy, setOrderBy] = React.useState('name');
     const [selected, setSelected] = React.useState([]);
     const [page, setPage] = React.useState(0);
     const [dense, setDense] = React.useState(false);
     const [rowsPerPage, setRowsPerPage] = React.useState(5);
 
-    const firebaseDataMessages = Object.entries(dataMessages);
-    console.log("firebaseDataMessages", firebaseDataMessages);
+    const firebaseDataMessages = Object.values(dataMessages);
 
     const handleRequestSort = (event, property) => {
         const isAsc = orderBy === property && order === 'asc';
@@ -284,19 +283,19 @@ export const ListMessagesTables = ({dataMessages}) => {
                         <TableBody>
                             {stableSort(firebaseDataMessages, getComparator(order, orderBy))
                                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                                .map(([key, message]) => {
-                                    const isItemSelected = isSelected(key);
-                                    const labelId = `enhanced-table-checkbox-${key}`;
+                                .map((message, index) => {
+                                    const isItemSelected = isSelected(index);
+                                    const labelId = `enhanced-table-checkbox-${index}`;
                                     const regex = new RegExp("-", "g");
-                                    console.log(key);
+                                    console.log("message", message);
                                     return (
                                         <TableRow
                                             hover
-                                            onClick={(event) => handleClick(event, key)}
+                                            onClick={(event) => handleClick(event, index)}
                                             role="checkbox"
                                             aria-checked={isItemSelected}
                                             tabIndex={-1}
-                                            key={key}
+                                            key={index}
                                             selected={isItemSelected}
                                         >
                                             <TableCell padding="checkbox">
@@ -311,9 +310,8 @@ export const ListMessagesTables = ({dataMessages}) => {
                                             <TableCell align="right">{message.firstName}</TableCell>
                                             <TableCell align="right">
                                                 <Link to={{
-                                                    pathname:`/listOneMessages/${key.replace(regex, "")}`,
-                                                    state:{message}}}
-                                                >{message.message}
+                                                    pathname:`/listOneMessages/${message.key.replace(regex, "")}`,
+                                                    state:{message}}}>{message.message}
                                                 </Link>
                                             </TableCell>
                                             <TableCell align="right">{message.numberPeople}</TableCell>
@@ -321,6 +319,7 @@ export const ListMessagesTables = ({dataMessages}) => {
                                             <TableCell align="right"><a href={`mailto:${message.mail}`}>{message.mail}</a></TableCell>
                                         </TableRow>
                                     );
+
                                 })}
                             {emptyRows > 0 && (
                                 <TableRow style={{height: (dense ? 33 : 53) * emptyRows}}>

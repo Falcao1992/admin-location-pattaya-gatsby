@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {Link} from "react-router-dom";
 
 // Import Components of Material-Ui
@@ -25,6 +25,24 @@ const useStyles = makeStyles({
 const SidePanel = () => {
     const classes = useStyles();
     const [open, setOpen] = useState(false);
+    const [numberNewMessages, setNumberNewMessages] = useState({});
+
+    useEffect(() => {
+        const fetchDataMessages = async () => {
+            try {
+                const dbRef = app.database().ref("/contactMessage");
+                const snapshot = await dbRef.once("value");
+                const value = snapshot.val();
+                const FilterNewMessages = Object.values(value).filter(msg => msg.read === "false")
+                console.log(FilterNewMessages)
+                setNumberNewMessages(FilterNewMessages.length);
+            } catch (e) {
+                console.error(e)
+            }
+        };
+        fetchDataMessages()
+
+    }, []);
 
     const toggleDrawer = (open) => event => {
         if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
@@ -63,7 +81,7 @@ const SidePanel = () => {
                 <Link to="/listMessages">
                     <ListItem button>
                         <ListItemIcon><CreateIcon/></ListItemIcon>
-                        <ListItemText className={classes.listItem} primary="Voir les messages"/>
+                        <ListItemText className={classes.listItem} primary={`Voir les messages (${numberNewMessages})`}/>
                     </ListItem>
                 </Link>
                 <Divider/>
