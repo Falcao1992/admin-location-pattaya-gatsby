@@ -5,13 +5,20 @@ import Footer from "../SidePanel/Footer";
 import app from "../../firebase";
 import styled from "styled-components";
 import {CircularLoadingContainer, CircularLoading} from "../StyledComponents/Loader";
-import {Container} from "@material-ui/core";
 import {Link} from "react-router-dom";
+import WarningIcon from '@material-ui/icons/Warning';
+import moment from "moment";
+import 'moment/locale/fr';
+import ScheduleIcon from "@material-ui/icons/Schedule";
+import PeopleIcon from "@material-ui/icons/People";
+
+moment.locale('fr');
 
 const Home = ({history}) => {
     const [dataImages, setDataImage] = useState([]);
-    const [lastMessages, setLastMessages] = useState([])
+    const [lastMessages, setLastMessages] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
+    const regex = new RegExp("-", "g");
 
     useEffect(() => {
         fetchDataImage();
@@ -40,8 +47,6 @@ const Home = ({history}) => {
             const snapshot = await dbRef.once("value");
             const dataFlat = flattenArray((snapshot.val()))
             dataFlat.sort(function (a, b) {
-                // Turn your strings into dates, and then subtract them
-                // to get a value that is either negative, positive, or zero.
                 return new Date(b.date) - new Date(a.date);
             });
             const dataFormat = dataFlat.slice(0, 8);
@@ -84,7 +89,7 @@ const Home = ({history}) => {
     return (
         <>
             <SidePanel/>
-            <Container fixed>
+            <>
                 <SectionHome>
                     <TitleSection>Voir mes articles :</TitleSection>
                     <WrapperGrid>
@@ -99,34 +104,87 @@ const Home = ({history}) => {
                 </SectionHome>
 
                 <SectionHome>
-                    <TitleSection>Mes Courriers :</TitleSection>
-                    <Link to="/listMessages">clique ici</Link>
+                    <TitleSection>Mes Courriers non lus :</TitleSection>
+                    <WrapperMessages>
+                    {console.log(Object.values(lastMessages))}
+                    {lastMessages && Object.values(lastMessages).map((msg, index) => {
+                        return (
+                            <ContainerMessage key={index}>
+
+                                <WarningIcon/>
+
+                                <Link to={{
+                                    pathname: `/listOneMessages/${msg.key.replace(regex, "")}`,
+                                    state: {message: msg}
+                                }}>{`${msg.name} ${msg.firstName}`}
+                                </Link>
+
+                                <ContainerIconText>
+                                    <p>{msg.numberPeople}</p>
+                                    <PeopleIcon fontSize="small"/>
+                                </ContainerIconText>
+
+                                <ContainerIconText>
+                                    <p>{moment(msg.dateMessage).fromNow()}</p>
+                                    <ScheduleIcon fontSize="small"/>
+                                </ContainerIconText>
+                            </ContainerMessage>
+                        )
+                    })}
+                    </WrapperMessages>
                 </SectionHome>
-            </Container>
+            </>
             <Footer/>
         </>
     )
 };
+const ContainerMessage = styled.div`
+    display: grid;
+    grid-template-columns: 15% 35% 15% 35%;
+    grid-gap: 2px;
+    padding: 15px;
+    p{
+        margin-right: 1rem;
+        margin-left: auto;
+    }
+    `;
+
+const ContainerIconText = styled.div`
+    display: flex;
+
+    `;
 
 const TitleSection = styled.h2`
         font-family: ${props => props.theme.font.title}, sans-serif;
         padding: 15px 0;
         font-size: 1.7em;     
-
     `;
 const SectionHome = styled.section`
         display: flex;
         flex-direction: column;      
         align-items: center;
+        margin-bottom: 3rem;
     `;
 const WrapperGrid = styled.div`
-        border: ${props => props.theme.color.secondary} 2px solid;
+        border: ${props => props.theme.color.secondary} 1px solid;
         display: grid;
         grid-template-columns: repeat(4, auto);
         grid-gap: 2px;
         margin: auto;
-        width: 60%; 
+        width: 70%; 
         padding: 1px;
+        `;
+
+const WrapperMessages = styled.div`
+        margin: auto;
+        width: 70%; 
+        padding: 1px;
+        > div {
+            margin-top: 2rem;
+        }     
+        > div:nth-child(2n) {
+            background-color: ${props => props.theme.color.primary};
+        }
         `;
 
 const ContainerImageGrid = styled.div`
