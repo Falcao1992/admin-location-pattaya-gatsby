@@ -1,4 +1,4 @@
-import React from 'react';
+import React  from 'react';
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
 import {lighten, makeStyles} from '@material-ui/core/styles';
@@ -22,6 +22,13 @@ import {
 } from '@material-ui/core';
 import DeleteIcon from '@material-ui/icons/Delete';
 import FilterListIcon from '@material-ui/icons/FilterList';
+import PhoneIcon from '@material-ui/icons/Phone';
+import MailIcon from '@material-ui/icons/Mail';
+import PeopleIcon from '@material-ui/icons/People';
+import ScheduleIcon from '@material-ui/icons/Schedule';
+import SendIcon from '@material-ui/icons/Send';
+
+
 import {Link} from "react-router-dom";
 import styled from "styled-components";
 
@@ -60,9 +67,9 @@ const stableSort = (array, comparator) => {
 const headCells = [
     {id: 'name', numeric: false, disablePadding: true, label: 'Nom de Famille'},
     {id: 'firstName', numeric: false, disablePadding: false, label: 'Prénom'},
-    {id: 'message', numeric: false, disablePadding: false, label: 'message'},
+    {id: 'message', numeric: false, disablePadding: false, label: 'Message'},
     {id: 'numberPeople', numeric: true, disablePadding: false, label: 'Nb. de Personne'},
-    {id: 'phoneNumber', numeric: true, disablePadding: false, label: 'n° de Téléphone'},
+    {id: 'phoneNumber', numeric: true, disablePadding: false, label: 'N° de Téléphone'},
     {id: 'mail', numeric: false, disablePadding: false, label: 'Email'},
     {id: 'dateMessage', numeric: false, disablePadding: false, label: 'Date du Message'},
 ];
@@ -217,6 +224,7 @@ export const ListMessagesTables = ({dataMessages}) => {
 
     const firebaseDataMessages = Object.values(dataMessages);
 
+
     const handleRequestSort = (event, property) => {
         const isAsc = orderBy === property && order === 'asc';
         setOrder(isAsc ? 'desc' : 'asc');
@@ -232,12 +240,11 @@ export const ListMessagesTables = ({dataMessages}) => {
         setSelected([]);
     };
 
-    const handleClick = (event, name) => {
-        const selectedIndex = selected.indexOf(name);
+    const handleClick = (event, index) => {
+        const selectedIndex = selected.indexOf(index);
         let newSelected = [];
-
         if (selectedIndex === -1) {
-            newSelected = newSelected.concat(selected, name);
+            newSelected = newSelected.concat(selected, index);
         } else if (selectedIndex === 0) {
             newSelected = newSelected.concat(selected.slice(1));
         } else if (selectedIndex === selected.length - 1) {
@@ -248,7 +255,6 @@ export const ListMessagesTables = ({dataMessages}) => {
                 selected.slice(selectedIndex + 1),
             );
         }
-
         setSelected(newSelected);
     };
 
@@ -265,7 +271,7 @@ export const ListMessagesTables = ({dataMessages}) => {
         setDense(event.target.checked);
     };
 
-    const isSelected = (name) => selected.indexOf(name) !== -1;
+    const isSelected = (index) => selected.indexOf(index) !== -1;
 
     const emptyRows = rowsPerPage - Math.min(rowsPerPage, firebaseDataMessages.length - page * rowsPerPage);
 
@@ -296,7 +302,6 @@ export const ListMessagesTables = ({dataMessages}) => {
                                     const isItemSelected = isSelected(index);
                                     const labelId = `enhanced-table-checkbox-${index}`;
                                     const regex = new RegExp("-", "g");
-                                    console.log("message", message);
                                     return (
                                         <TableRowStyled
                                             hover
@@ -314,23 +319,59 @@ export const ListMessagesTables = ({dataMessages}) => {
                                                     inputProps={{'aria-labelledby': labelId}}
                                                 />
                                             </TableCell>
-                                            <TableCell component="th" id={labelId} scope="row" padding="none">
+
+                                            <TableCell component="th" id={labelId} scope="row">
                                                 {message.name}
                                             </TableCell>
+
                                             <TableCell align="right">{message.firstName}</TableCell>
+
                                             <TableCell align="right">
                                                 <Link to={{
                                                     pathname: `/listOneMessages/${message.key.replace(regex, "")}`,
                                                     state: {message}
-                                                }}>{message.message}
+                                                }}>
+                                                    <IconButton aria-label="Mail icon">
+                                                        <MailIcon fontSize="small"/>
+                                                    </IconButton>
+                                                    {message.message}
                                                 </Link>
                                             </TableCell>
-                                            <TableCell align="right">{message.numberPeople}</TableCell>
-                                            <TableCell align="right"><a
-                                                href={`tel:${message.phoneNumber}`}>{message.phoneNumber}</a></TableCell>
-                                            <TableCell align="right"><a
-                                                href={`mailto:${message.mail}`}>{message.mail}</a></TableCell>
-                                            <TableCell align="right">{moment(message.dateMessage).fromNow()}</TableCell>
+
+                                            <TableCell align="right">
+                                                <IconButton aria-label="People icon">
+                                                    <PeopleIcon fontSize="small"/>
+                                                </IconButton>
+                                                {message.numberPeople}
+                                            </TableCell>
+
+                                            <TableCell align="right">
+                                                <a href={`tel:${message.phoneNumber}`}>
+                                                    <IconButton aria-label="Phone icon">
+                                                        <PhoneIcon fontSize="small"/>
+                                                    </IconButton>
+                                                    {message.phoneNumber}
+                                                </a>
+                                            </TableCell>
+
+                                            <TableCell align="right">
+                                                <a href={`mailto:${message.mail}`}>
+
+                                                    <IconButton aria-label="Send icon">
+                                                        <SendIcon fontSize="small"/>
+                                                    </IconButton>
+                                                    {message.mail}
+                                                </a>
+                                            </TableCell>
+
+                                            <TableCell align="right" className="dateClassCell">
+                                                <ContainerCellTimeAgo>
+                                                    <IconButton aria-label="Schedule icon">
+                                                        <ScheduleIcon fontSize="small"/>
+                                                    </IconButton>
+                                                    {moment(message.dateMessage).fromNow()}
+                                                </ContainerCellTimeAgo>
+                                            </TableCell>
                                         </TableRowStyled>
                                     );
 
@@ -361,6 +402,18 @@ export const ListMessagesTables = ({dataMessages}) => {
     );
 };
 
+const ContainerCellTimeAgo = styled.div`
+    width: max-content;
+`;
+
 const TableRowStyled = styled(TableRow)`
-    background-color: ${props => props.isread === "true" ? "none" : "#2c77d021"};
+    td,th, a {
+        font-weight: ${props => props.isread === "true" && "bold"};
+        color: ${props => props.isread === "true" ? props.theme.color.secondary : "initial"};
+        font-size: ${props => props.isread === "true" ? "1rem" : "0.8rem"};
+    }
+    a {
+        display: flex;
+        align-items: center;
+    }
     `;
