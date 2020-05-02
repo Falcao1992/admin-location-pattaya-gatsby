@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {Link} from "react-router-dom";
 
 // Import Components of Material-Ui
@@ -9,6 +9,7 @@ import HomeIcon from '@material-ui/icons/Home';
 import MenuIcon from '@material-ui/icons/Menu';
 import CreateIcon from '@material-ui/icons/Create';
 import ListIcon from '@material-ui/icons/List';
+import EmailIcon from '@material-ui/icons/Email';
 import styled from "styled-components";
 import app from "../../firebase";
 
@@ -19,12 +20,33 @@ const useStyles = makeStyles({
     listItem: {
         color: 'black',
         textDecoration: 'none'
+    },
+    link: {
+        textDecoration: "none"
     }
 });
 
 const SidePanel = () => {
     const classes = useStyles();
     const [open, setOpen] = useState(false);
+    const [numberNewMessages, setNumberNewMessages] = useState({});
+
+    useEffect(() => {
+        const fetchDataMessages = async () => {
+            try {
+                const dbRef = app.database().ref("/contactMessage");
+                const snapshot = await dbRef.once("value");
+                const value = snapshot.val();
+                const FilterNewMessages = Object.values(value).filter(msg => msg.read === "false")
+                //console.log(FilterNewMessages)
+                setNumberNewMessages(FilterNewMessages.length);
+            } catch (e) {
+                console.error(e)
+            }
+        };
+        fetchDataMessages()
+
+    }, []);
 
     const toggleDrawer = (open) => event => {
         if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
@@ -41,22 +63,29 @@ const SidePanel = () => {
             onKeyDown={toggleDrawer(false)}
         >
             <List>
-                <Link to="/">
+                <Link to="/" className={classes.link}>
                     <ListItem button>
                         <ListItemIcon><HomeIcon/></ListItemIcon>
                         <ListItemText className={classes.listItem} primary="Page d'acceuil"/>
                     </ListItem>
                 </Link>
-                <Link to="/listData">
+                <Link to="/listData" className={classes.link}>
                     <ListItem button>
                         <ListItemIcon><ListIcon/></ListItemIcon>
                         <ListItemText className={classes.listItem} primary="Voir les articles"/>
                     </ListItem>
                 </Link>
-                <Link to="/listData/create">
+                <Link to="/listData/create" className={classes.link}>
                     <ListItem button>
                         <ListItemIcon><CreateIcon/></ListItemIcon>
                         <ListItemText className={classes.listItem} primary="Creer un article"/>
+                    </ListItem>
+                </Link>
+
+                <Link to="/listMessages" className={classes.link}>
+                    <ListItem button>
+                        <ListItemIcon><EmailIcon/></ListItemIcon>
+                        <ListItemText className={classes.listItem} primary={`Voir les messages (${numberNewMessages})`}/>
                     </ListItem>
                 </Link>
                 <Divider/>
@@ -92,5 +121,6 @@ const TitleSidePanel = styled.h2 `
         font-family: ${props => props.theme.font.title}, sans-serif;
         margin: 0;  
         padding-right: 5px;  
-    `
+    `;
+
 export default SidePanel;
