@@ -275,6 +275,14 @@ export const ListMessagesTables = ({dataMessages}) => {
 
     const emptyRows = rowsPerPage - Math.min(rowsPerPage, firebaseDataMessages.length - page * rowsPerPage);
 
+    const limitCharsMessage = (msg) => {
+        if(msg.length > 55) {
+            return msg.substring(0,55) + " ...";
+        } else {
+            return msg
+        }
+    };
+
     return (
         <div className={classes.root}>
             <Paper className={classes.paper}>
@@ -334,7 +342,7 @@ export const ListMessagesTables = ({dataMessages}) => {
                                                     <IconButton aria-label="Mail icon">
                                                         <MailIcon fontSize="small"/>
                                                     </IconButton>
-                                                    {message.message}
+                                                    {limitCharsMessage(message.message)}
                                                 </Link>
                                             </TableCell>
 
@@ -408,9 +416,10 @@ const ContainerCellTimeAgo = styled.div`
 
 const TableRowStyled = styled(TableRow)`
     td,th, a {
-        font-weight: ${props => props.isread === "true" && "bold"};
-        color: ${props => props.isread === "true" ? props.theme.color.secondary : "initial"};
+        font-weight: ${props => props.isread === "false" && "bold"};
+        color: ${props => props.isread === "false" ? props.theme.color.secondary : "initial"};
         font-size: ${props => props.isread === "true" ? "1rem" : "0.8rem"};
+        width: max-content;
     }
     a {
         display: flex;
