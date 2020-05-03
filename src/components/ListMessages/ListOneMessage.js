@@ -9,7 +9,8 @@ const ListOneMessage = (props) => {
         <>
             <h2>salut votre message ...</h2>
             <p>{moment(message.dateMessage).fromNow()}</p>
-            {Object.entries(message).map(([key, msg]) => {
+            {console.log(message)}
+            { message && Object.entries(message).map(([key, msg]) => {
                         return (
                             <div key={key}>
                                 <h4>{key}</h4>

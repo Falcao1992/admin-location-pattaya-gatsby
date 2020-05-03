@@ -72,6 +72,7 @@ const headCells = [
     {id: 'phoneNumber', numeric: true, disablePadding: false, label: 'N° de Téléphone'},
     {id: 'mail', numeric: false, disablePadding: false, label: 'Email'},
     {id: 'dateMessage', numeric: false, disablePadding: false, label: 'Date du Message'},
+    {id: 'read', numeric: false, disablePadding: false, label: 'Lu'},
 ];
 
 const EnhancedTableHead = (props) => {
@@ -82,7 +83,7 @@ const EnhancedTableHead = (props) => {
     };
 
     return (
-        <TableHead>
+        <TableHeadStyled>
             <TableRow>
                 <TableCell padding="checkbox">
                     <Checkbox
@@ -114,7 +115,7 @@ const EnhancedTableHead = (props) => {
                     </TableCell>
                 ))}
             </TableRow>
-        </TableHead>
+        </TableHeadStyled>
     );
 };
 
@@ -275,6 +276,14 @@ export const ListMessagesTables = ({dataMessages}) => {
 
     const emptyRows = rowsPerPage - Math.min(rowsPerPage, firebaseDataMessages.length - page * rowsPerPage);
 
+    const limitCharsMessage = (msg) => {
+        if(msg.length > 55) {
+            return msg.substring(0,55) + " ...";
+        } else {
+            return msg
+        }
+    };
+
     return (
         <div className={classes.root}>
             <Paper className={classes.paper}>
@@ -334,7 +343,7 @@ export const ListMessagesTables = ({dataMessages}) => {
                                                     <IconButton aria-label="Mail icon">
                                                         <MailIcon fontSize="small"/>
                                                     </IconButton>
-                                                    {message.message}
+                                                    {limitCharsMessage(message.message)}
                                                 </Link>
                                             </TableCell>
 
@@ -372,7 +381,10 @@ export const ListMessagesTables = ({dataMessages}) => {
                                                     {moment(message.dateMessage).fromNow()}
                                                 </ContainerCellTimeAgo>
                                             </TableCell>
+                                            <TableCell align="right">{message.read}</TableCell>
                                         </TableRowStyled>
+
+
                                     );
 
                                 })}
@@ -402,15 +414,20 @@ export const ListMessagesTables = ({dataMessages}) => {
     );
 };
 
+const TableHeadStyled = styled(TableHead)`
+    background-color: ${props => props.theme.color.primary};
+`;
+
 const ContainerCellTimeAgo = styled.div`
     width: max-content;
 `;
 
 const TableRowStyled = styled(TableRow)`
     td,th, a {
-        font-weight: ${props => props.isread === "true" && "bold"};
-        color: ${props => props.isread === "true" ? props.theme.color.secondary : "initial"};
-        font-size: ${props => props.isread === "true" ? "1rem" : "0.8rem"};
+        font-weight: ${props => props.isread === "false" && "bold"};
+        color: ${props => props.isread === "false" ? props.theme.color.secondary : "initial"};
+        font-size: ${props => props.isread === "false" ? "1rem" : "0.8rem"};
+        width: max-content;
     }
     a {
         display: flex;
