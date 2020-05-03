@@ -92,7 +92,7 @@ const Home = ({history}) => {
             <>
                 <SectionHome>
                     <TitleSection>Voir mes articles :</TitleSection>
-                    <WrapperGrid>
+                    <WrapperGridArticles>
                         {dataImages.length !== 0 && dataImages.map(image => {
                             return (
                                 <ContainerImageGrid key={image.name} onClick={() => handleLinkToArticle(image)}>
@@ -100,7 +100,7 @@ const Home = ({history}) => {
                                 </ContainerImageGrid>
                             )
                         })}
-                    </WrapperGrid>
+                    </WrapperGridArticles>
                 </SectionHome>
 
                 <SectionHome>
@@ -110,20 +110,16 @@ const Home = ({history}) => {
                     {lastMessages && Object.values(lastMessages).map((msg, index) => {
                         return (
                             <ContainerMessage key={index}>
-
                                 <WarningIcon/>
-
                                 <Link to={{
                                     pathname: `/listOneMessages/${msg.key.replace(regex, "")}`,
                                     state: {message: msg}
                                 }}>{`${msg.name} ${msg.firstName}`}
                                 </Link>
-
                                 <ContainerIconText>
                                     <p>{msg.numberPeople}</p>
                                     <PeopleIcon fontSize="small"/>
                                 </ContainerIconText>
-
                                 <ContainerIconText>
                                     <p>{moment(msg.dateMessage).fromNow()}</p>
                                     <ScheduleIcon fontSize="small"/>
@@ -165,19 +161,19 @@ const SectionHome = styled.section`
         align-items: center;
         margin-bottom: 3rem;
     `;
-const WrapperGrid = styled.div`
-        border: ${props => props.theme.color.secondary} 1px solid;
+const WrapperGridArticles = styled.div`
         display: grid;
         grid-template-columns: repeat(4, auto);
+        grid-template-rows: 1fr 1fr;
         grid-gap: 2px;
         margin: auto;
-        width: 70%; 
+        width: 90%; 
         padding: 1px;
         `;
 
 const WrapperMessages = styled.div`
         margin: auto;
-        width: 70%; 
+        width: 90%; 
         padding: 1px;
         > div {
             margin-top: 2rem;
