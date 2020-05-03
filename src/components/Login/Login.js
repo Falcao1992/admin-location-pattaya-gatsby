@@ -34,10 +34,10 @@ const Login = ({history}) => {
                 <h1>Se connecter</h1>
                 <form onSubmit={handleLogin}>
                     <div>
-                        <Input id="outlined-basic" name="email" type="email" placeholder="Email"/>
+                        <Input name="email" type="email" placeholder="Email"/>
                     </div>
                     <div>
-                        <Input id="outlined-basic" name="password" type="password" placeholder="Password"/>
+                        <Input name="password" type="password" autoComplete="on" placeholder="Password"/>
                     </div>
                     <div>
                         <Button variant="contained" color="primary" type="submit">Se connecter</Button>

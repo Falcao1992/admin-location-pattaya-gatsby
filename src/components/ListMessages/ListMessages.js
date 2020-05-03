@@ -4,6 +4,7 @@ import {Container} from "@material-ui/core";
 import app from "../../firebase";
 import {ListMessagesTables} from "./ListMessagesTable";
 import {CircularLoadingContainer, CircularLoading} from "../StyledComponents/Loader";
+import Footer from "../SidePanel/Footer";
 
 const ListMessages = () => {
 
@@ -46,6 +47,7 @@ const ListMessages = () => {
             <Container fixed>
                 <ListMessagesTables dataMessages={firebaseAllDataMessages}/>
             </Container>
+            <Footer/>
         </>
     )
 };

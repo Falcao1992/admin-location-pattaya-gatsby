@@ -18,7 +18,6 @@ const Home = ({history}) => {
     const [dataImages, setDataImage] = useState([]);
     const [lastMessages, setLastMessages] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
-    const regex = new RegExp("-", "g");
 
     useEffect(() => {
         fetchDataImage();
@@ -45,7 +44,7 @@ const Home = ({history}) => {
             };
             const dbRef = app.database().ref("/pagesPicturesData");
             const snapshot = await dbRef.once("value");
-            const dataFlat = flattenArray((snapshot.val()))
+            const dataFlat = flattenArray((snapshot.val()));
             dataFlat.sort(function (a, b) {
                 return new Date(b.date) - new Date(a.date);
             });
@@ -74,7 +73,6 @@ const Home = ({history}) => {
         history.push("/listData");
     };
 
-
     if (isLoading) {
         return (
             <>
@@ -89,7 +87,6 @@ const Home = ({history}) => {
     return (
         <>
             <SidePanel/>
-            <>
                 <SectionHome>
                     <TitleSection>Voir mes articles :</TitleSection>
                     <WrapperGridArticles>
@@ -106,42 +103,39 @@ const Home = ({history}) => {
                 <SectionHome>
                     <TitleSection>Mes Courriers non lus :</TitleSection>
                     <WrapperMessages>
-                    {console.log(Object.values(lastMessages))}
                     {lastMessages && Object.values(lastMessages).map((msg, index) => {
                         return (
                             <ContainerMessage key={index}>
                                 <WarningIcon/>
                                 <Link to={{
-                                    pathname: `/listOneMessages/${msg.key.replace(regex, "")}`,
+                                    pathname: `/listOneMessages/${msg.name.toLowerCase()}`,
                                     state: {message: msg}
                                 }}>{`${msg.name} ${msg.firstName}`}
                                 </Link>
                                 <ContainerIconText>
-                                    <p>{msg.numberPeople}</p>
                                     <PeopleIcon fontSize="small"/>
+                                    <p>{msg.numberPeople}</p>
                                 </ContainerIconText>
                                 <ContainerIconText>
-                                    <p>{moment(msg.dateMessage).fromNow()}</p>
                                     <ScheduleIcon fontSize="small"/>
+                                    <p>{moment(msg.dateMessage).fromNow()}</p>
                                 </ContainerIconText>
                             </ContainerMessage>
                         )
                     })}
                     </WrapperMessages>
                 </SectionHome>
-            </>
             <Footer/>
         </>
     )
 };
 const ContainerMessage = styled.div`
     display: grid;
-    grid-template-columns: 15% 35% 15% 35%;
+    grid-template-columns: 10% 35% 15% 40%;
     grid-gap: 2px;
     padding: 15px;
     p{
-        margin-right: 1rem;
-        margin-left: auto;
+        margin-left: 0.4rem;
     }
     `;
 

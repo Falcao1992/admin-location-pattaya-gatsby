@@ -310,7 +310,6 @@ export const ListMessagesTables = ({dataMessages}) => {
                                 .map((message, index) => {
                                     const isItemSelected = isSelected(index);
                                     const labelId = `enhanced-table-checkbox-${index}`;
-                                    const regex = new RegExp("-", "g");
                                     return (
                                         <TableRowStyled
                                             hover
@@ -337,7 +336,7 @@ export const ListMessagesTables = ({dataMessages}) => {
 
                                             <TableCell align="right">
                                                 <Link to={{
-                                                    pathname: `/listOneMessages/${message.key.replace(regex, "")}`,
+                                                    pathname: `/listOneMessages/${message.name.toLowerCase()}`,
                                                     state: {message}
                                                 }}>
                                                     <IconButton aria-label="Mail icon">
