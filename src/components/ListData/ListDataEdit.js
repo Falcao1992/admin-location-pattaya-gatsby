@@ -39,7 +39,7 @@ const ListDataEdit = ({location, history}) => {
         <>
             <SidePanel/>
             {currentDataEdit && [currentDataEdit].map((article, index) => {
-                const {name, urlImage, articleTitle, location, type, content} = currentDataEdit;
+                const {name, urlImage, articleTitle, location, type, content, source} = currentDataEdit;
                 return (
                     <Container fixed key={index}>
                         <PageBlockTitleDescription>
@@ -51,6 +51,7 @@ const ListDataEdit = ({location, history}) => {
                                 <img src={urlImage} alt={name}/>
                                 <ArticleLocation><span>{articleTitle}</span>{location}</ArticleLocation>
                                 <p>{content}</p>
+                                {source && <p>{source}</p>}
                                 {type === "category" &&
                                 <SeeMoreLink to="/"><span>voir plus ></span></SeeMoreLink>}
                             </ArticleContent>

@@ -20,7 +20,7 @@ const Home = ({history}) => {
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        fetchDataImage();
+        //fetchDataImage();
         fetchDataMessages()
 
     }, []);
@@ -73,7 +73,7 @@ const Home = ({history}) => {
         history.push("/listData");
     };
 
-    if (isLoading) {
+    /*if (isLoading) {
         return (
             <>
                 <SidePanel/>
@@ -82,7 +82,7 @@ const Home = ({history}) => {
                 </CircularLoadingContainer>
             </>
         )
-    }
+    }*/
 
     return (
         <>

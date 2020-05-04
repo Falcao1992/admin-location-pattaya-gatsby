@@ -29,10 +29,11 @@ const ListDataCreate = ({history}) => {
         page: "",
         type: "article",
         uid: nanoid(),
-        urlImage: ""
+        urlImage: "",
+        source: ""
     };
     const [dataArticle, setDataArticle] = useState(data);
-    const {articleTitle, content, location, name, page, uid} = dataArticle;
+    const {articleTitle, content, location, name, page, uid, source} = dataArticle;
 
     toast.configure();
 
@@ -67,6 +68,9 @@ const ListDataCreate = ({history}) => {
 
     const sendData = () => {
         let copyDataArticle;
+        if(dataArticle.source === ""){
+            dataArticle.source = "none"
+        }
         dataArticle.date = moment().format();
         dataArticle.dateUpdated = moment().format();
         localStorage.setItem("article choose", toCamelCaseString(nameBeforeTransform));
@@ -190,6 +194,10 @@ const ListDataCreate = ({history}) => {
                                      helperText={missingField && content === "" ? "veuillez remplir ce champ" : content !== "" && missingField ?
                                          <CorrectField>bien rempli*</CorrectField> : false}
                                      error={missingField && content === "" && true}
+                    />
+
+                    <TextFieldStyled onChange={handleChange} value={source} multiline rowsMax="2"
+                                     id="source" label="source (falcutatif)" variant="outlined"
                     />
 
                     <TextFieldStyled onChange={handleChange} value={location} required id="location" label="location"

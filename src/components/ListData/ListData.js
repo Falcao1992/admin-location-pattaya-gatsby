@@ -6,7 +6,6 @@ import useLocalStorage from 'react-use-localstorage';
 import RefreshIcon from '@material-ui/icons/Refresh';
 import {CircularLoadingContainer, CircularLoading} from "../StyledComponents/Loader";
 
-
 import {
     MenuItem,
     FormControl,
@@ -110,13 +109,14 @@ const ListData = () => {
     const displayArticleData = (page, article) => {
         if (pageChoose && articleChoose && isLoading === false) {
             const dataArticle = firebaseAllData[page][article];
-            const {name, urlImage, articleTitle, location, type, content} = dataArticle;
+            const {name, urlImage, articleTitle, location, type, content, source} = dataArticle;
             return (
                 <div key={name}>
                     <ArticleContent id={name}>
                         <img src={urlImage} alt={name}/>
                         <ArticleLocation><span>{articleTitle}</span>{location}</ArticleLocation>
                         <p>{content}</p>
+                        {source !== "none" ? <p>{source}</p> : "vous n'avez pas attribuer de source a cet article"}
                         {type === "category" && <SeeMoreLink to="/"><span>voir plus ></span></SeeMoreLink>}
                     </ArticleContent>
                     {articleChoose && pageChoose && <ContainerButton>
