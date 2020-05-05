@@ -189,7 +189,7 @@ const ListDataCreate = ({history}) => {
 
                     />
 
-                    <TextFieldStyled onChange={handleChange} value={content} required multiline rowsMax="4"
+                    <TextFieldStyled onChange={handleChange} value={content} required multiline rowsMax="6"
                                      id="content" label="content" variant="outlined"
                                      helperText={missingField && content === "" ? "veuillez remplir ce champ" : content !== "" && missingField ?
                                          <CorrectField>bien rempli*</CorrectField> : false}

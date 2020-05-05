@@ -61,9 +61,9 @@ const ListDataEdit = ({location, history}) => {
                                 return (
                                         <div key={index}>
                                                 <TextFieldStyled
-                                                disabled={(value[1] === "article" || value[0] === "uid" || value[0] === "name" || value[0] === "page" || value[0] === "uid" || value[0] === "urlImage") && true}
+                                                disabled={(value[1] === "article" || value[0] === "uid" || value[0] === "name" || value[0] === "page" || value[0] === "uid" || value[0] === "urlImage" || value[0] === "date" || value[0] === "dateUpdated") && true}
                                                 onChange={(e) => handleEditData(e, value[0])}
-                                                multiline rowsMax="2"
+                                                multiline rowsMax="6"
                                                 required label={value[0]}
                                                 defaultValue={value[1]}
                                                 />
