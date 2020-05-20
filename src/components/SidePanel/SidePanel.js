@@ -38,7 +38,6 @@ const SidePanel = () => {
                 const snapshot = await dbRef.once("value");
                 const value = snapshot.val();
                 const FilterNewMessages = Object.values(value).filter(msg => msg.read === "false")
-                //console.log(FilterNewMessages)
                 setNumberNewMessages(FilterNewMessages.length);
             } catch (e) {
                 console.error(e)
