@@ -1,4 +1,4 @@
-import React  from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
 import {lighten, makeStyles} from '@material-ui/core/styles';
@@ -30,12 +30,15 @@ import SendIcon from '@material-ui/icons/Send';
 
 
 import {Link} from "react-router-dom";
+import {toast} from "react-toastify";
 import styled from "styled-components";
 
 import moment from "moment";
 import 'moment/locale/fr';
+import app from "../../firebase";
 
 moment.locale('fr');
+toast.configure();
 
 
 const descendingComparator = (a, b, orderBy) => {
@@ -149,9 +152,24 @@ const useToolbarStyles = makeStyles((theme) => ({
     },
 }));
 
-const EnhancedTableToolbar = (props) => {
+const EnhancedTableToolbar = ({numSelected, messagesSelected, setIsDeletedMessages}) => {
     const classes = useToolbarStyles();
-    const {numSelected} = props;
+
+    const deleteMessageSelected = () => {
+        messagesSelected.forEach(key => {
+            app.database().ref(`/contactMessage/${key}`).remove().then(() => {
+                toast.success(`Le message à été correctement supprimé !!!`, {
+                    position: "top-right",
+                    autoClose: 6000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true
+                });
+                setIsDeletedMessages(true);
+            });
+        })
+    };
 
     return (
         <Toolbar
@@ -171,8 +189,8 @@ const EnhancedTableToolbar = (props) => {
 
             {numSelected > 0 ? (
                 <Tooltip title="Delete">
-                    <IconButton aria-label="delete">
-                        <DeleteIcon/>
+                    <IconButton aria-label="delete" onClick={deleteMessageSelected}>
+                        <DeleteIcon />
                     </IconButton>
                 </Tooltip>
             ) : (
@@ -214,7 +232,7 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-export const ListMessagesTables = ({dataMessages}) => {
+export const ListMessagesTables = ({dataMessages, setIsDeletedMessages}) => {
     const classes = useStyles();
     const [order, setOrder] = React.useState('asc');
     const [orderBy, setOrderBy] = React.useState('name');
@@ -224,6 +242,7 @@ export const ListMessagesTables = ({dataMessages}) => {
     const [rowsPerPage, setRowsPerPage] = React.useState(5);
 
     const firebaseDataMessages = Object.values(dataMessages);
+
 
 
     const handleRequestSort = (event, property) => {
@@ -241,11 +260,11 @@ export const ListMessagesTables = ({dataMessages}) => {
         setSelected([]);
     };
 
-    const handleClick = (event, index) => {
-        const selectedIndex = selected.indexOf(index);
+    const handleClick = (event, key) => {
+        const selectedIndex = selected.indexOf(key);
         let newSelected = [];
         if (selectedIndex === -1) {
-            newSelected = newSelected.concat(selected, index);
+            newSelected = newSelected.concat(selected, key);
         } else if (selectedIndex === 0) {
             newSelected = newSelected.concat(selected.slice(1));
         } else if (selectedIndex === selected.length - 1) {
@@ -272,7 +291,9 @@ export const ListMessagesTables = ({dataMessages}) => {
         setDense(event.target.checked);
     };
 
-    const isSelected = (index) => selected.indexOf(index) !== -1;
+    const isSelected = (key) => {
+        return selected.indexOf(key) !== -1;
+    }
 
     const emptyRows = rowsPerPage - Math.min(rowsPerPage, firebaseDataMessages.length - page * rowsPerPage);
 
@@ -287,7 +308,7 @@ export const ListMessagesTables = ({dataMessages}) => {
     return (
         <div className={classes.root}>
             <Paper className={classes.paper}>
-                <EnhancedTableToolbar numSelected={selected.length}/>
+                <EnhancedTableToolbar numSelected={selected.length} messagesSelected={selected} setIsDeletedMessages={setIsDeletedMessages}/>
                 <TableContainer>
                     <Table
                         className={classes.table}
@@ -308,12 +329,12 @@ export const ListMessagesTables = ({dataMessages}) => {
                             {stableSort(firebaseDataMessages, getComparator(order, orderBy))
                                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                                 .map((message, index) => {
-                                    const isItemSelected = isSelected(index);
+                                    const isItemSelected = isSelected(message.key);
                                     const labelId = `enhanced-table-checkbox-${index}`;
                                     return (
                                         <TableRowStyled
                                             hover
-                                            onClick={(event) => handleClick(event, index)}
+                                            onClick={(event) => handleClick(event, message.key)}
                                             role="checkbox"
                                             aria-checked={isItemSelected}
                                             tabIndex={-1}
@@ -364,7 +385,6 @@ export const ListMessagesTables = ({dataMessages}) => {
 
                                             <TableCell align="right">
                                                 <a href={`mailto:${message.mail}`}>
-
                                                     <IconButton aria-label="Send icon">
                                                         <SendIcon fontSize="small"/>
                                                     </IconButton>

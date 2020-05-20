@@ -5,9 +5,10 @@ import {DisplayCalendar} from "./DisplayCalendar";
 import styled from "styled-components";
 import Footer from "../SidePanel/Footer";
 import app from "../../firebase";
+import {Button} from "@material-ui/core";
 
-const ListOneMessage = (props) => {
-    const {message} = props.location.state;
+const ListOneMessage = ({location, history}) => {
+    const {message} = location.state;
 
     useEffect(() => {
         handleIsRead()
@@ -18,6 +19,11 @@ const ListOneMessage = (props) => {
             .update({
                 read: "true"
             });
+    };
+
+    const handleDeleteMessage = () => {
+        app.database().ref(`/contactMessage/${message.key}`).remove().then(() => {history.push("/listMessages")});
+        console.log(message.key)
     };
 
     return (
@@ -33,6 +39,8 @@ const ListOneMessage = (props) => {
                 </BlockMessage>
                 {message.dateStartReservation && message.dateEndReservation && <DisplayCalendar rangeDate={[new Date(message.dateStartReservation),new Date(message.dateEndReservation)]}/>}
             </ContainerOneMessage>
+            <Button variant="contained" color="secondary"
+                    onClick={handleDeleteMessage}> Supprimer</Button>
             <Footer/>
         </>
     )

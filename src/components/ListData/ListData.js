@@ -33,7 +33,7 @@ const ListData = () => {
     const classes = useStyles();
     const [firebaseAllData, setFirebaseAllData] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
-    const [isDelete, setIsDelete] = useState(true);
+    const [isDelete, setIsDelete] = useState(false);
 
     const [pageChoose, setPageChoose] = useLocalStorage("page choose", "");
     const [articleChoose, setArticleChoose] = useLocalStorage("article choose", "");
@@ -116,7 +116,7 @@ const ListData = () => {
                         <img src={urlImage} alt={name}/>
                         <ArticleLocation><span>{articleTitle}</span>{location}</ArticleLocation>
                         <p>{content}</p>
-                        {source !== "none" ? <p>{source}</p> : "vous n'avez pas attribuer de source a cet article"}
+                        {source !== "none" ? <p> Source : {source}</p> : "vous n'avez pas attribuer de source a cet article"}
                         {type === "category" && <SeeMoreLink to="/"><span>voir plus ></span></SeeMoreLink>}
                     </ArticleContent>
                     {articleChoose && pageChoose && <ContainerButton>

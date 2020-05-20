@@ -10,7 +10,7 @@ const ListMessages = () => {
 
     const [firebaseAllDataMessages, setFirebaseAllDataMessages] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
-
+    const [isDeletedMessages, setIsDeletedMessages] = React.useState(false);
 
     useEffect(() => {
         const fetchDataMessages = async () => {
@@ -21,6 +21,7 @@ const ListMessages = () => {
                 const value = snapshot.val();
                 setFirebaseAllDataMessages(value);
 
+                setIsDeletedMessages(false);
                 setIsLoading(false);
             } catch (e) {
                 console.error(e)
@@ -28,7 +29,7 @@ const ListMessages = () => {
         };
         fetchDataMessages()
 
-    }, []);
+    }, [isDeletedMessages]);
 
     if (isLoading) {
         return (
@@ -45,7 +46,12 @@ const ListMessages = () => {
         <>
             <SidePanel/>
             <Container fixed>
-                <ListMessagesTables dataMessages={firebaseAllDataMessages}/>
+                {firebaseAllDataMessages !== null
+                    ?
+                    <ListMessagesTables dataMessages={firebaseAllDataMessages} setIsDeletedMessages={setIsDeletedMessages}/>
+                    :
+                    <p>Aucun messages</p>
+                }
             </Container>
             <Footer/>
         </>
