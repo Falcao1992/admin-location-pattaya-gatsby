@@ -15,6 +15,7 @@ import ListOneMessage from "./components/ListMessages/ListOneMessage";
 
 import theme from "./assets/theme";
 import {ThemeProvider} from "styled-components";
+import ListBanner from "./components/Banner/ListBanner";
 
 function App() {
     return (
@@ -29,6 +30,7 @@ function App() {
                     <PrivateRoute exact path="/listData/edit/:articleName" component={ListDataEdit}/>
                     <PrivateRoute exact path="/listMessages" component={ListMessages}/>
                     <PrivateRoute exact path="/listOneMessages/:keyMessage" component={ListOneMessage}/>
+                    <Route exact path="/banner" component={ListBanner}/>
                     <Route component={NoMatch}/>
                 </Switch>
             </Router>
