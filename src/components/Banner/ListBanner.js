@@ -4,7 +4,7 @@ import Footer from "../SidePanel/Footer";
 import app from "../../firebase";
 import {CircularLoading, CircularLoadingContainer} from "../StyledComponents/Loader";
 import styled from "styled-components";
-import {Container, Input, CardMedia, Button} from "@material-ui/core";
+import {Container, Input, Button} from "@material-ui/core";
 
 
 const ListBanner = () => {
@@ -35,7 +35,7 @@ const ListBanner = () => {
         }
     };
 
-    const PreviewFile = (e,index) => {
+    const PreviewFile = (e, index) => {
         try {
             const file = e.target.files[0];
 
@@ -58,7 +58,7 @@ const ListBanner = () => {
 
     const submitEditBanner = (index, pageName) => {
         console.log(currentImageFile[index])
-        if(currentImageFile[index] !== undefined) {
+        if (currentImageFile[index] !== undefined) {
             console.log("c'est bon")
             sendData(currentImageFile[index], pageName)
         } else {
@@ -109,27 +109,25 @@ const ListBanner = () => {
         <>
             <SidePanel/>
             <Container fixed>
+                <PageBlockTitleDescription>
+                    <h1>Editer les Bannières</h1>
+                    <p>Veuillez choisir une nouvelle image puis cliquez sur le boutton associé afin de valider le changement de bannière :</p>
+                </PageBlockTitleDescription>
                 {firebaseDataBanner && Object.values(firebaseDataBanner).map((banner, index) => {
                     return (
-                        <ContainerBanner key={banner.uid}>
-                            <div>
-                                <p>{banner.page}</p>
-                                <img src={banner.urlImage} alt={banner.page}/>
-
-                            </div>
-                            <div>
-                                <Input type="file" margin='dense' required onChange={(e) => PreviewFile(e,index)}/>
-                                {typeof currentBannerImg[index] === 'string'
-                                    &&
-                                    <CardMedia title="Image de l'article" alt="article">
-                                        <img src={currentBannerImg[index]} alt="article"/>
-                                    </CardMedia>}
-                            </div>
-                            <div>
-                                <Button variant="contained" type="button" onClick={() => submitEditBanner(index, banner.page)} color="primary"
-                                              aria-label="edit">create</Button>
-                            </div>
-                        </ContainerBanner>
+                        <ContainerBannerPreview key={banner.uid}>
+                            <p>Bannière de la page {banner.page} :</p>
+                            <img src={banner.urlImage} alt={banner.page}/>
+                            <Input type="file" margin='dense' required onChange={(e) => PreviewFile(e, index)}/>
+                            {typeof currentBannerImg[index] === 'string'
+                            &&
+                                <img src={currentBannerImg[index]} alt="article"/>
+                            }
+                            <Button variant="contained" type="button"
+                                    disabled={!currentImageFile[index]}
+                                    onClick={() => submitEditBanner(index, banner.page)} color="secondary"
+                                    aria-label="edit">Changer Banniere</Button>
+                        </ContainerBannerPreview>
                     )
                 })}
             </Container>
@@ -138,12 +136,29 @@ const ListBanner = () => {
     )
 };
 
-const ContainerBanner = styled.div`
-    width: 100%;
+const PageBlockTitleDescription = styled.div`
+        margin-bottom: 20px;
+        h1 {
+        font-family: ${props => props.theme.font.title}, sans-serif;
+        font-size: 1.7em;     
+        }      
+    `;
+
+const ContainerBannerPreview = styled.div`
     display: flex;
+    flex-direction: column;
+    p {
+      font-size: 1.6rem;
+      text-decoration: underline;
+    }
     img {
-        width: 100%;
+      width: 100%;
+      margin: 0.5rem 0;
+    }
+    Button {
+      margin: 0.5rem 0 2rem;
     }
 `;
+
 
 export default ListBanner
