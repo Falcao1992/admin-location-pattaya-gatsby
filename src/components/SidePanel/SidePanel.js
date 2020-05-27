@@ -87,6 +87,12 @@ const SidePanel = () => {
                         <ListItemText className={classes.listItem} primary={`Voir les messages (${numberNewMessages})`}/>
                     </ListItem>
                 </Link>
+                <Link to="/banner" className={classes.link}>
+                    <ListItem button>
+                        <ListItemIcon><EmailIcon/></ListItemIcon>
+                        <ListItemText className={classes.listItem} primary="Changer les bannière"/>
+                    </ListItem>
+                </Link>
                 <Divider/>
                 <ListItem button onClick={() => app.auth().signOut()}>
                     <ListItemIcon><ExitToAppIcon/></ListItemIcon>
